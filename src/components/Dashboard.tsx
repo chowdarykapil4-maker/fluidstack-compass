@@ -14,6 +14,24 @@ interface Props {
 
 const VALUATION_POINTS = [500e6, 1e9, 2.5e9, 5e9, 7.5e9, 10e9, 12.5e9, 15e9, 17.5e9, 20e9, 25e9, 30e9, 35e9, 40e9, 50e9];
 
+const VALUATION_PRESETS: { value: number; label: string; sub?: string }[] = [
+  { value: 1_200_000_000, label: "$1.2B", sub: "C1 entry" },
+  { value: 7_500_000_000, label: "$7.5B", sub: "Current" },
+  { value: 10_000_000_000, label: "$10B" },
+  { value: 15_000_000_000, label: "$15B" },
+  { value: 20_000_000_000, label: "$20B" },
+  { value: 30_000_000_000, label: "$30B" },
+  { value: 50_000_000_000, label: "$50B" },
+];
+
+const FUNDING_ROUNDS = [
+  { round: "Seed $3M", date: "Mar 2019", investors: "Seedcamp, Mercuri", highlight: false },
+  { round: "SAFE $24.7M", date: "2024", investors: "Various", highlight: false },
+  { round: "Debt $37.5M", date: "2024", investors: "Macquarie", highlight: false },
+  { round: "Series A $200M", date: "Feb 2025", investors: "$1.2B", highlight: true },
+  { round: "Series B $450M", date: "Jan 2026", investors: "$7.5B", highlight: true },
+];
+
 function GainCard({ cycle, valuation }: { cycle: CycleData; valuation: number }) {
   const gain = calculateGains(cycle, valuation);
   const isPositive = gain.grossGain >= 0;
@@ -74,10 +92,8 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
   const valuation = currentValuation;
   const setValuation = onValuationChange;
 
-  const gains = cycles.map(c => calculateGains(c, valuation));
   const totalOutlay = cycles.reduce((s, c) => s + c.totalOutlay, 0);
   const cycleCount = cycles.length;
-  
 
   const chartData = VALUATION_POINTS.map(v => {
     const g = cycles.map(c => calculateGains(c, v));
@@ -107,7 +123,7 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
   };
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-4">
       {/* Section 1: Investment Details (collapsible) */}
       <div className="border border-border rounded-lg bg-card/50">
         <button
@@ -122,49 +138,102 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
         </button>
 
         {detailsOpen && (
-          <div className={`grid grid-cols-1 ${cycleCount > 1 ? 'lg:grid-cols-2' : ''} gap-3 px-4 pb-4`}>
-            {cycles.map((cycle, i) => (
-              <div key={i} className="rounded-md border border-border bg-secondary/30 px-4 py-3 text-xs space-y-1">
-                <p className="text-foreground font-medium text-sm">{cycle.label} <span className="text-muted-foreground font-normal">· Class {cycle.memberClass} Member · {cycle.fundEntity}</span></p>
-                <p className="text-muted-foreground">Date: {new Date(cycle.investmentDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} · Round: {cycle.roundName}</p>
-                <p className="text-muted-foreground">Entry: <span className="font-mono-nums text-foreground">{formatValuation(cycle.entryValuation)}</span> · Outlay: <span className="font-mono-nums text-foreground">{formatCurrency(cycle.totalOutlay)}</span> · Fee: <span className="font-mono-nums text-foreground">{formatCurrency(cycle.managementFee)}</span></p>
-                <p className="text-muted-foreground">Net Invested: <span className="font-mono-nums text-foreground">{formatCurrency(cycle.netInvested)}</span></p>
-                <p className="text-primary text-xs italic">{cycle.memberClass === 'A' ? '6.25× preferred return, no carry below threshold' : 'Carry from 1× on all gains (22.5%)'}</p>
-              </div>
-            ))}
+          <div className="px-4 pb-4 space-y-3">
+            <div className={`grid grid-cols-1 ${cycleCount > 1 ? 'lg:grid-cols-2' : ''} gap-3`}>
+              {cycles.map((cycle, i) => (
+                <div key={i} className="rounded-md border border-border bg-secondary/30 px-4 py-3 text-xs space-y-1">
+                  <p className="text-foreground font-medium text-sm">{cycle.label} <span className="text-muted-foreground font-normal">· Class {cycle.memberClass} Member · {cycle.fundEntity}</span></p>
+                  <p className="text-muted-foreground">Date: {new Date(cycle.investmentDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} · Round: {cycle.roundName}</p>
+                  <p className="text-muted-foreground">Entry: <span className="font-mono-nums text-foreground">{formatValuation(cycle.entryValuation)}</span> · Outlay: <span className="font-mono-nums text-foreground">{formatCurrency(cycle.totalOutlay)}</span> · Fee: <span className="font-mono-nums text-foreground">{formatCurrency(cycle.managementFee)}</span></p>
+                  <p className="text-muted-foreground">Net Invested: <span className="font-mono-nums text-foreground">{formatCurrency(cycle.netInvested)}</span></p>
+                  <p className="text-primary text-xs italic">{cycle.memberClass === 'A' ? '6.25× preferred return, no carry below threshold' : 'Carry from 1× on all gains (22.5%)'}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* Funding History */}
+            <div className="rounded-md border border-border bg-secondary/30 px-4 py-3">
+              <p className="text-xs font-medium text-foreground mb-1.5">FluidStack Funding History</p>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                {FUNDING_ROUNDS.map((r, i) => (
+                  <span key={i}>
+                    {i > 0 && <span className="mx-1.5">→</span>}
+                    <span className={r.highlight ? 'text-primary' : ''}>{r.round}</span>
+                    <span className="mx-0.5">·</span>
+                    <span className={r.highlight ? 'text-primary' : ''}>{r.date}</span>
+                    <span className="mx-0.5">·</span>
+                    <span className={r.highlight ? 'text-primary' : ''}>{r.investors}</span>
+                  </span>
+                ))}
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">Total raised: ~$715M across 5 rounds</p>
+            </div>
           </div>
         )}
       </div>
 
-      {/* Section 2: Valuation Modeler */}
-      <Card className="p-5 bg-card border-border">
-        <p className="text-3xl font-bold font-mono-nums text-primary text-center mb-4">{formatValuation(valuation)}</p>
-        <Slider
-          value={[valuation]}
-          onValueChange={handleSlider}
-          min={500_000_000}
-          max={50_000_000_000}
-          step={100_000_000}
-          className="w-full"
-        />
-        <div className="flex items-center justify-between mt-1">
-          <div className="flex gap-[1px] text-xs text-muted-foreground">
-            <span>$500M</span>
-            <span className="mx-auto" />
+      {/* Section 2: Compact Valuation Control Strip */}
+      <div className="bg-primary/[0.03] border border-primary/15 rounded-lg px-4 py-3">
+        <div className="flex items-center gap-4">
+          {/* Left: label + value */}
+          <div className="shrink-0">
+            <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Valuation</p>
+            <p className="text-xl font-semibold font-mono-nums text-primary">{formatValuation(valuation)}</p>
           </div>
-          <div className="w-36">
-            <Input
-              value={inputFocused ? inputText : formatValuation(valuation)}
-              onChange={handleInput}
-              onFocus={handleInputFocus}
-              onBlur={handleInputBlur}
-              placeholder="e.g. 12 for $12B"
-              className="font-mono-nums bg-secondary border-border text-xs h-7"
+
+          {/* Center: slider */}
+          <div className="flex-1 flex items-center gap-2">
+            <span className="text-[10px] text-muted-foreground shrink-0">$500M</span>
+            <Slider
+              value={[valuation]}
+              onValueChange={handleSlider}
+              min={500_000_000}
+              max={50_000_000_000}
+              step={100_000_000}
+              className="flex-1"
             />
+            <span className="text-[10px] text-muted-foreground shrink-0">$50B</span>
           </div>
-          <span className="text-xs text-muted-foreground">$50B</span>
+
+          {/* Right: direct entry */}
+          <Input
+            value={inputFocused ? inputText : formatValuation(valuation)}
+            onChange={handleInput}
+            onFocus={handleInputFocus}
+            onBlur={handleInputBlur}
+            placeholder="e.g. 12"
+            className="font-mono-nums bg-secondary border-border text-xs h-8 w-20 text-center shrink-0"
+          />
         </div>
-      </Card>
+      </div>
+
+      {/* Preset pills */}
+      <div className="flex gap-1.5 flex-wrap">
+        {VALUATION_PRESETS.map(p => {
+          const isActive = valuation === p.value;
+          return (
+            <button
+              key={p.value}
+              onClick={() => setValuation(p.value)}
+              className={`font-mono-nums text-xs rounded-md border px-2.5 py-1.5 transition-colors ${
+                isActive
+                  ? 'bg-primary/10 border-primary/30 text-primary'
+                  : 'bg-secondary/30 border-border text-muted-foreground hover:bg-secondary/50 hover:text-foreground'
+              }`}
+            >
+              {p.label}
+              {p.sub && <span className="block text-[9px] leading-tight opacity-70">{p.sub}</span>}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Contextual divider */}
+      <div className="flex items-center gap-3">
+        <div className="flex-1 h-px bg-primary/10" />
+        <span className="text-[10px] uppercase tracking-wider text-primary/30">Your positions at this mark</span>
+        <div className="flex-1 h-px bg-primary/10" />
+      </div>
 
       {/* Gain cards */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -172,7 +241,6 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
           <GainCard key={i} cycle={cycle} valuation={valuation} />
         ))}
       </div>
-
 
       {/* Section 3: Gains Visualization */}
       <Card className="p-5 bg-card border-border">
