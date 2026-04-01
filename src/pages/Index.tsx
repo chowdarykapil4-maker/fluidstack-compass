@@ -78,13 +78,17 @@ export default function Index() {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <label className="text-xs text-muted-foreground">Current Mark:</label>
-            <Input
-              value={valInput}
-              onChange={handleValuationChange}
-              className="w-40 font-mono-nums bg-secondary border-border text-sm"
-            />
-            <span className="text-sm font-semibold text-primary font-mono-nums">{formatValuation(state.currentValuation)}</span>
+            <div>
+              <label className="text-xs text-muted-foreground block">Current Mark:</label>
+              <Input
+                value={valFocused ? valInput : formatValuation(state.currentValuation)}
+                onChange={handleValChange}
+                onFocus={handleValFocus}
+                onBlur={handleValBlur}
+                className="w-40 font-mono-nums bg-secondary border-border text-sm"
+              />
+              <span className="text-xs text-muted-foreground mt-0.5 block">Enter value in $</span>
+            </div>
           </div>
         </div>
       </header>

@@ -131,12 +131,15 @@ export default function PaperGainsCalculator({ cycles }: Props) {
             </div>
           </div>
           <div className="w-48">
-            <label className="text-xs text-muted-foreground mb-2 block">Manual Input ($)</label>
+            <label className="text-xs text-muted-foreground mb-1 block">Manual Input</label>
             <Input
-              value={inputText}
+              value={inputFocused ? inputText : formatValuation(valuation)}
               onChange={handleInput}
+              onFocus={handleInputFocus}
+              onBlur={handleInputBlur}
               className="font-mono-nums bg-secondary border-border"
             />
+            <span className="text-xs text-muted-foreground mt-0.5 block">Enter value in $</span>
           </div>
           <div className="text-center">
             <p className="text-xs text-muted-foreground">Selected</p>
