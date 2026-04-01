@@ -148,10 +148,12 @@ export default function SettingsModal({ open, onOpenChange, profile, onSave, isF
               {isFirstTime ? "Get Started" : "Save"}
             </Button>
           </div>
-          <p className="text-[11px] text-muted-foreground text-center mt-1">Your data stays on this device only — nothing is sent to any server.</p>
-          {isFirstTime && (
-            <p className="text-[11px] text-muted-foreground text-center mt-1">Tip: Add to Home Screen from Safari's share menu for the best experience.</p>
-          )}
+          <div className="text-center mt-2 space-y-0.5">
+            <p className="text-[10px] text-muted-foreground/60">Your data stays on this device only — nothing is sent to any server.</p>
+            {isFirstTime && (
+              <p className="text-[10px] text-muted-foreground/60">Tip: Add to Home Screen from Safari's share menu for the best experience.</p>
+            )}
+          </div>
         </div>
       </DialogContent>
     </Dialog>
