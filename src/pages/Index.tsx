@@ -7,7 +7,7 @@ import SettingsModal from "@/components/SettingsModal";
 import { BarChart3, Table2, TrendingUp, Settings } from "lucide-react";
 
 const STORAGE_KEY = "fluidstack-compass";
-const STORAGE_VERSION = 3;
+const STORAGE_VERSION = 4;
 
 interface AppState {
   _version: number;

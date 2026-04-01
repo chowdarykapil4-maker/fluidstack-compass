@@ -142,7 +142,7 @@ export default function SettingsModal({ open, onOpenChange, profile, onSave, isF
             </button>
             <Button
               onClick={handleSave}
-              disabled={!draft.cycle1Participating && !draft.cycle2Participating}
+              disabled={!hasValidCycle}
               className="px-6"
             >
               {isFirstTime ? "Get Started" : "Save"}
