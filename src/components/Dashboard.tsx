@@ -232,6 +232,8 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
         ))}
       </div>
 
+      <MonthlyDigest />
+
       <Card className="p-3 sm:p-5 bg-card border-border">
         <h4 className="text-sm font-medium text-foreground mb-2">Net Gains Across Valuations</h4>
         <ResponsiveContainer width="100%" height={220}>
