@@ -132,8 +132,8 @@ export default function SettingsModal({ open, onOpenChange, profile, onSave, isF
             )}
           </div>
 
-          {!draft.cycle1Participating && !draft.cycle2Participating && (
-            <p className="text-xs text-gain-negative">Enable at least one cycle to save.</p>
+          {!hasValidCycle && (
+            <p className="text-xs text-gain-negative">Enable at least one cycle with a committed amount to save.</p>
           )}
 
           <div className="flex items-center justify-between pt-2">
