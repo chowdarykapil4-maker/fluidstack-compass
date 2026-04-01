@@ -30,11 +30,10 @@ function GainCard({ cycle, valuation }: { cycle: CycleData; valuation: number })
         <Row label="Gross Value" value={formatCurrency(gain.grossValue)} />
         <Row label="Gross Gain" value={formatCurrency(gain.grossGain)} highlight={isPositive} negative={!isPositive} />
         {cycle.memberClass === 'A' ? (
-          <Row
-            label={gain.valuationMultiple <= 6.25 ? "Carry: $0 (below 6.25× pref)" : "Carry (22.5% on excess)"}
-            value={`-${formatCurrency(gain.totalCarry)}`}
-            muted
-          />
+          <>
+            <Row label="Carry Tier 1 (20%, up to 6.25×)" value={`-${formatCurrency(gain.carryTier1)}`} muted />
+            <Row label="Carry Tier 2 (22.5%, above 6.25×)" value={`-${formatCurrency(gain.carryTier2)}`} muted />
+          </>
         ) : (
           <Row
             label={gain.grossGain <= 0 ? "Carry: $0 (no gain)" : "Carry (22.5% on gains)"}
