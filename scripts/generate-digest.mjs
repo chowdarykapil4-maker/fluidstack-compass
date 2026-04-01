@@ -14,11 +14,11 @@ if (!ANTHROPIC_API_KEY) {
 }
 
 const today = new Date();
-const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+const lastMonthEnd = new Date(today.getFullYear(), today.getMonth(), 0);
 const formatDate = (d) => d.toISOString().split('T')[0];
 
-const weekLabel = `Week of ${today.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`;
-
+const weekLabel = lastMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 async function generateDigest() {
   console.log(`Generating digest for ${weekLabel}...`);
   console.log(`Searching for news from ${formatDate(weekAgo)} to ${formatDate(today)}`);
@@ -42,7 +42,7 @@ async function generateDigest() {
       messages: [
         {
           role: 'user',
-          content: `Search for any news, announcements, funding, partnerships, deals, customer wins, executive hires, or notable mentions of FluidStack (the GPU neocloud / cloud infrastructure company founded by Gary Wu and Cesar Maklary) from the past 7 days (${formatDate(weekAgo)} to ${formatDate(today)}).
+          content: `Search for any news, announcements, funding, partnerships, deals, customer wins, executive hires, or notable mentions of FluidStack (the GPU neocloud / cloud infrastructure company founded by Gary Wu and Cesar Maklary) from the from ${weekLabel} (${formatDate(lastMonth)} to ${formatDate(lastMonthEnd)}).
 
 Also search for news about FluidStack's key relationships: TeraWulf JV, Anthropic data center partnership, and any GPU cloud market developments that directly mention FluidStack.
 
@@ -105,7 +105,7 @@ Only include items that are genuinely from the past 7 days. Do not include old n
     generatedAt: today.toISOString(),
     quiet: digest.quiet || digest.items.length === 0,
     summary: digest.quiet || digest.items.length === 0
-      ? 'Quiet week — no major FluidStack news.'
+      ? 'Quiet month — no major FluidStack news.'
       : `${digest.items.length} item${digest.items.length > 1 ? 's' : ''} this week.`,
     items: digest.items || [],
   };
