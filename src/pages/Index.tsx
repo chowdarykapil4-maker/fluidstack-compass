@@ -148,7 +148,6 @@ export default function Index() {
               cycles={state.cycles}
               gains={gains}
               currentValuation={state.currentValuation}
-              lastUpdated={lastUpdated}
             />
           </TabsContent>
 
