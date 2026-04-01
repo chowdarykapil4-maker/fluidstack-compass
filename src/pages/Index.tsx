@@ -127,6 +127,10 @@ export default function Index() {
           </TabsContent>
         </Tabs>
       </main>
+
+      <footer className="border-t border-border py-6 text-center text-xs text-muted-foreground">
+        For personal tracking only. Not financial advice. All gains are illiquid and unrealized.
+      </footer>
     </div>
   );
 }
