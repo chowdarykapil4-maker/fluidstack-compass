@@ -74,10 +74,6 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
   const gains = cycles.map(c => calculateGains(c, valuation));
   const totalOutlay = cycles.reduce((s, c) => s + c.totalOutlay, 0);
   const totalNetInvested = cycles.reduce((s, c) => s + c.netInvested, 0);
-  const combinedGrossValue = gains.reduce((s, g) => s + g.grossValue, 0);
-  const combinedNetGain = gains.reduce((s, g) => s + g.netGain, 0);
-  const combinedNetPosition = gains.reduce((s, g) => s + g.grossValue - g.totalCarry, 0);
-  const blendedMultiple = combinedNetPosition / totalOutlay;
 
   const areaChartData = VALUATION_POINTS.map(v => {
     const g = cycles.map(c => calculateGains(c, v));
