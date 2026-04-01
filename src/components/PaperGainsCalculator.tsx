@@ -70,7 +70,8 @@ function WaterfallCard({ cycle, valuation }: { cycle: CycleData; valuation: numb
 
 export default function PaperGainsCalculator({ cycles }: Props) {
   const [valuation, setValuation] = useState(7_500_000_000);
-  const [inputText, setInputText] = useState("7500000000");
+  const [inputText, setInputText] = useState("");
+  const [inputFocused, setInputFocused] = useState(false);
 
   const gains = cycles.map(c => calculateGains(c, valuation));
   const combinedNetGain = gains.reduce((s, g) => s + g.netGain, 0);
@@ -87,15 +88,27 @@ export default function PaperGainsCalculator({ cycles }: Props) {
   const handleSlider = (v: number[]) => {
     const val = v[0];
     setValuation(val);
-    setInputText(String(val));
+  };
+
+  const handleInputFocus = () => {
+    setInputFocused(true);
+    setInputText(String(valuation));
+  };
+
+  const handleInputBlur = () => {
+    setInputFocused(false);
+    const parsed = parseValuationInput(inputText);
+    if (parsed && parsed >= 500_000_000 && parsed <= 50_000_000_000) {
+      setValuation(parsed);
+    }
   };
 
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const raw = e.target.value.replace(/[^0-9]/g, '');
+    const raw = e.target.value.replace(/[^0-9.]/g, '');
     setInputText(raw);
-    const num = parseInt(raw);
-    if (!isNaN(num) && num >= 500_000_000 && num <= 50_000_000_000) {
-      setValuation(num);
+    const parsed = parseValuationInput(raw);
+    if (parsed && parsed >= 500_000_000 && parsed <= 50_000_000_000) {
+      setValuation(parsed);
     }
   };
 
