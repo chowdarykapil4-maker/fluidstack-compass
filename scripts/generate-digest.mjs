@@ -1,7 +1,7 @@
 /**
- * Weekly FluidStack Digest Generator
+ * Monthly FluidStack Digest Generator
  * 
- * Calls Claude API with web search to find FluidStack news from the past week,
+ * Calls Claude API with web search to find FluidStack news from the past month,
  * then appends a structured digest entry to public/news.json.
  */
 
@@ -18,10 +18,11 @@ const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
 const lastMonthEnd = new Date(today.getFullYear(), today.getMonth(), 0);
 const formatDate = (d) => d.toISOString().split('T')[0];
 
-const weekLabel = lastMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+const monthLabel = lastMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
 async function generateDigest() {
-  console.log(`Generating digest for ${weekLabel}...`);
-  console.log(`Searching for news from ${formatDate(weekAgo)} to ${formatDate(today)}`);
+  console.log(`Generating digest for ${monthLabel}...`);
+  console.log(`Searching for news from ${formatDate(lastMonth)} to ${formatDate(lastMonthEnd)}`);
 
   const response = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
@@ -35,6 +36,75 @@ async function generateDigest() {
       max_tokens: 2000,
       tools: [
         {
+          type: 'web_search_20250305',
+          name: 'web_search',
+        },
+      ],
+      messages: [
+        {
+          role: 'user',
+          content: `Search for any news, announcements, funding, partnerships, deals, customer wins, executive hires, or notable mentions of FluidStack (the GPU neocloud / cloud infrastructure company founded by Gary Wu and Cesar Maklary) from ${monthLabel} (${formatDate(lastMonth)} to ${formatDate(lastMonthEnd)}).
+
+Also search for news about FluidStack's key relationships: TeraWulf JV, Anthropic data center partnership, and any GPU cloud market developments that directly mention FluidStack.
+
+Respond ONLY with a JSON object in this exact format, no markdown fences, no preamble:
+
+{
+  "items": [
+    {
+      "headline": "Short headline (max 80 chars)",
+      "summary": "One sentence summary of what happened and why it matters",
+      "source": "Publication name",
+      "url": "https://...",
+      "category": "funding|partnership|product|hiring|market|other"
+    }
+  ],
+  "quiet": false
+}
+
+If nothing notable happened this month, return:
+{
+  "items": [],
+  "quiet": true
+}
+
+Only include items that are genuinely from ${monthLabel}. Do not include old news or speculation. Be selective — only notable items, not routine mentions.`,
+        },
+      ],
+    }),
+  });
+
+  if (!response.ok) {
+    const err = await response.text();
+    console.error('API error:', response.status, err);
+    process.exit(1);
+  }
+
+  const data = await response.json();
+
+  // Extract text content from response (may have tool use blocks mixed in)
+  const textBlocks = data.content.filter((b) => b.type === 'text');
+  const rawText = textBlocks.map((b) => b.text).join('\n');
+
+  // Parse JSON from response, stripping any markdown fences
+  const cleaned = rawText.replace(/```json\s*|```\s*/g, '').trim();
+
+  let digest;
+  try {
+    digest = JSON.parse(cleaned);
+  } catch (e) {
+    console.error('Failed to parse digest JSON:', e.message);
+    console.error('Raw response:', rawText);
+    // Default to quiet month if parsing fails
+    digest = { items: [], quiet: true };
+  }
+
+  // Build the monthly entry
+  const entry = {
+    week: formatDate(today),
+    label: monthLabel,
+    generatedAt: today.toISOString(),
+    quiet:        {
           type: 'web_search_20250305',
           name: 'web_search',
         },
