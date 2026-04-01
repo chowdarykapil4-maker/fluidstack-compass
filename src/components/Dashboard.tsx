@@ -22,11 +22,6 @@ const VALUATION_PRESETS: { value: number; label: string }[] = [
   { value: 50_000_000_000, label: "$50B" },
 ];
 
-function shortLabel(cycle: CycleData): string {
-  const num = cycle.label.match(/\d+/)?.[0] || "";
-  const round = cycle.roundName.replace(/^\$[\d.]+[MBK]?\s*/, "");
-  return `C${num} (${round})`;
-}
 
 function UnifiedCycleCard({ cycle, valuation }: { cycle: CycleData; valuation: number }) {
   const gain = calculateGains(cycle, valuation);
