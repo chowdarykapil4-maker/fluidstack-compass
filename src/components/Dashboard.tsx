@@ -175,16 +175,6 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
           </div>
           <div className="text-center md:text-right">
             <p className="text-2xl font-bold font-mono-nums text-primary">{formatValuation(valuation)}</p>
-            {valuation !== currentValuation && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setValuation(currentValuation)}
-                className="text-xs text-muted-foreground hover:text-primary mt-1 h-auto py-1 px-2"
-              >
-                <RotateCcw className="w-3 h-3 mr-1" /> Reset to current mark
-              </Button>
-            )}
           </div>
         </div>
       </Card>
