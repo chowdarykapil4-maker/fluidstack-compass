@@ -27,8 +27,12 @@ export default function SettingsModal({ open, onOpenChange, profile, onSave, isF
   const c2Fee = draft.cycle2Committed * CYCLE2_FEE_RATE;
   const c2Outlay = draft.cycle2Committed + c2Fee;
 
+  const hasValidCycle =
+    (draft.cycle1Participating && draft.cycle1Committed > 0) ||
+    (draft.cycle2Participating && draft.cycle2Committed > 0);
+
   const handleSave = () => {
-    if (!draft.cycle1Participating && !draft.cycle2Participating) return;
+    if (!hasValidCycle) return;
     onSave(draft);
     onOpenChange(false);
   };
