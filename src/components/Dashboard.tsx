@@ -25,7 +25,6 @@ const VALUATION_PRESETS: { value: number; label: string }[] = [
 
 function UnifiedCycleCard({ cycle, valuation }: { cycle: CycleData; valuation: number }) {
   const gain = calculateGains(cycle, valuation);
-  const isPositive = gain.grossGain >= 0;
   const isNetPositive = gain.netGain >= 0;
 
   return (
