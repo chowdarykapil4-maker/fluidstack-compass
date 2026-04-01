@@ -22,13 +22,13 @@ function WaterfallCard({ cycle, valuation }: { cycle: CycleData; valuation: numb
   const gain = calculateGains(cycle, valuation);
   const isPositive = gain.grossGain >= 0;
 
-  const baseRows = [
+  const baseRows: WaterfallRow[] = [
     { label: "Gross Position Value", fmt: formatCurrency(gain.grossValue) },
     { label: "− Net Invested Capital", fmt: `-${formatCurrency(cycle.netInvested)}`, muted: true },
     { label: "= Gross Gain", fmt: formatCurrency(gain.grossGain), bold: true, highlight: isPositive, negative: !isPositive },
   ];
 
-  const carryRows = cycle.memberClass === 'A'
+  const carryRows: WaterfallRow[] = cycle.memberClass === 'A'
     ? [
         {
           label: gain.valuationMultiple <= 6.25
@@ -43,12 +43,12 @@ function WaterfallCard({ cycle, valuation }: { cycle: CycleData; valuation: numb
         { label: "− Carry Tier 2 (22.5%, >6.25×)", fmt: `-${formatCurrency(gain.carryTier2)}`, muted: true },
       ];
 
-  const bottomRows = [
+  const bottomRows: WaterfallRow[] = [
     { label: "= Net Gain to LP", fmt: formatCurrency(gain.netGain), bold: true, highlight: isPositive, negative: !isPositive },
     { label: "Net Multiple on Outlay", fmt: formatMultiple(gain.netMultipleOnOutlay), bold: true, highlight: gain.netMultipleOnOutlay >= 1, negative: gain.netMultipleOnOutlay < 1 },
   ];
 
-  const rows = [...baseRows, ...carryRows, ...bottomRows];
+  const rows: WaterfallRow[] = [...baseRows, ...carryRows, ...bottomRows];
 
   return (
     <Card className="p-5 bg-card border-border">
