@@ -198,12 +198,3 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
     </div>
   );
 }
-
-function Stat({ label, value, highlight, negative }: { label: string; value: string; highlight?: boolean; negative?: boolean }) {
-  return (
-    <div>
-      <p className="text-xs text-muted-foreground mb-1">{label}</p>
-      <p className={`text-base font-semibold font-mono-nums ${highlight ? 'text-gain-positive' : ''} ${negative ? 'text-gain-negative' : ''}`}>{value}</p>
-    </div>
-  );
-}
