@@ -2,14 +2,15 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
-import { CycleData, GainResult, calculateGains, formatCurrency, formatValuation, formatMultiple, parseValuationInput } from "@/lib/calculations";
+import { CycleData, calculateGains, formatCurrency, formatValuation, formatMultiple, parseValuationInput } from "@/lib/calculations";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from "recharts";
-import { ChevronDown, ChevronUp, RotateCcw } from "lucide-react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 interface Props {
   cycles: CycleData[];
   currentValuation: number;
+  onValuationChange: (val: number) => void;
 }
 
 const VALUATION_POINTS = [500e6, 1e9, 2.5e9, 5e9, 7.5e9, 10e9, 12.5e9, 15e9, 17.5e9, 20e9, 25e9, 30e9, 35e9, 40e9, 50e9];
@@ -62,11 +63,13 @@ function Row({ label, value, muted, bold, highlight, negative, large }: {
   );
 }
 
-export default function Dashboard({ cycles, currentValuation }: Props) {
+export default function Dashboard({ cycles, currentValuation, onValuationChange }: Props) {
   const [detailsOpen, setDetailsOpen] = useState(false);
-  const [valuation, setValuation] = useState(currentValuation);
   const [inputText, setInputText] = useState("");
   const [inputFocused, setInputFocused] = useState(false);
+
+  const valuation = currentValuation;
+  const setValuation = onValuationChange;
 
   const gains = cycles.map(c => calculateGains(c, valuation));
   const totalOutlay = cycles.reduce((s, c) => s + c.totalOutlay, 0);
@@ -86,7 +89,6 @@ export default function Dashboard({ cycles, currentValuation }: Props) {
     };
   });
   const selectedLabel = formatValuation(valuation);
-  const currentMarkLabel = formatValuation(currentValuation);
 
   const handleSlider = (v: number[]) => setValuation(v[0]);
 
@@ -173,16 +175,6 @@ export default function Dashboard({ cycles, currentValuation }: Props) {
           </div>
           <div className="text-center md:text-right">
             <p className="text-2xl font-bold font-mono-nums text-primary">{formatValuation(valuation)}</p>
-            {valuation !== currentValuation && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setValuation(currentValuation)}
-                className="text-xs text-muted-foreground hover:text-primary mt-1 h-auto py-1 px-2"
-              >
-                <RotateCcw className="w-3 h-3 mr-1" /> Reset to current mark
-              </Button>
-            )}
           </div>
         </div>
       </Card>
@@ -221,9 +213,6 @@ export default function Dashboard({ cycles, currentValuation }: Props) {
             <Area type="monotone" dataKey="Cycle 1" stackId="1" fill="hsl(152, 68%, 45%)" fillOpacity={0.3} stroke="hsl(152, 68%, 45%)" />
             <Area type="monotone" dataKey="Cycle 2" stackId="1" fill="hsl(152, 40%, 25%)" fillOpacity={0.3} stroke="hsl(152, 40%, 35%)" />
             <ReferenceLine x={selectedLabel} stroke="hsl(152, 68%, 45%)" strokeDasharray="4 4" label={{ value: "Selected", fill: "hsl(152, 68%, 45%)", fontSize: 11, position: "top" }} />
-            {valuation !== currentValuation && (
-              <ReferenceLine x={currentMarkLabel} stroke="hsl(150 5% 55%)" strokeDasharray="4 4" label={{ value: "Current", fill: "hsl(150 5% 55%)", fontSize: 11, position: "top" }} />
-            )}
           </AreaChart>
         </ResponsiveContainer>
       </Card>
