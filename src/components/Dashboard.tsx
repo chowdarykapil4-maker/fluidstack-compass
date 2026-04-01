@@ -41,9 +41,13 @@ function GainCard({ cycle, valuation }: { cycle: CycleData; valuation: number })
             <Row label="Carry Tier 2 (22.5%)" value={`-${formatCurrency(gain.carryTier2)}`} muted />
           </>
         )}
-        <div className="border-t border-border my-1" />
-        <Row label="Net Gain to LP" value={formatCurrency(gain.netGain)} highlight={isNetPositive} negative={!isNetPositive && gain.netGain !== 0} bold large />
-        <Row label="Net Multiple" value={formatMultiple(gain.netMultipleOnOutlay)} highlight={gain.netMultipleOnOutlay >= 1} negative={gain.netMultipleOnOutlay < 1} />
+        <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
+          <span className="text-secondary-foreground text-sm font-semibold">Net Gain to LP</span>
+          <span className={`font-mono-nums font-semibold text-lg ${isNetPositive ? 'text-gain-positive' : ''} ${!isNetPositive && gain.netGain !== 0 ? 'text-gain-negative' : ''}`}>
+            {formatCurrency(gain.netGain)}
+          </span>
+        </div>
+        <Row label="Net Multiple" value={formatMultiple(gain.netMultipleOnOutlay)} muted />
       </div>
     </Card>
   );
