@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
-import { Button } from "@/components/ui/button";
 import { CycleData, calculateGains, formatCurrency, formatValuation, formatMultiple, parseValuationInput } from "@/lib/calculations";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from "recharts";
 import { ChevronDown, ChevronUp } from "lucide-react";
@@ -74,10 +73,6 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
   const gains = cycles.map(c => calculateGains(c, valuation));
   const totalOutlay = cycles.reduce((s, c) => s + c.totalOutlay, 0);
   const totalNetInvested = cycles.reduce((s, c) => s + c.netInvested, 0);
-  const combinedGrossValue = gains.reduce((s, g) => s + g.grossValue, 0);
-  const combinedNetGain = gains.reduce((s, g) => s + g.netGain, 0);
-  const combinedNetPosition = gains.reduce((s, g) => s + g.grossValue - g.totalCarry, 0);
-  const blendedMultiple = combinedNetPosition / totalOutlay;
 
   const areaChartData = VALUATION_POINTS.map(v => {
     const g = cycles.map(c => calculateGains(c, v));
@@ -147,35 +142,29 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
 
       {/* Section 2: Valuation Modeler */}
       <Card className="p-5 bg-card border-border">
-        <div className="flex flex-col md:flex-row md:items-center gap-4">
-          <div className="flex-1">
-            <label className="text-xs text-muted-foreground mb-2 block">Modeled Exit Valuation</label>
-            <Slider
-              value={[valuation]}
-              onValueChange={handleSlider}
-              min={500_000_000}
-              max={50_000_000_000}
-              step={100_000_000}
-              className="w-full"
-            />
-            <div className="flex justify-between text-xs text-muted-foreground mt-1">
-              <span>$500M</span><span>$50B</span>
-            </div>
-          </div>
+        <div className="flex items-center gap-4 mb-3">
+          <p className="text-2xl font-bold font-mono-nums text-primary">{formatValuation(valuation)}</p>
           <div className="w-40">
-            <label className="text-xs text-muted-foreground mb-1 block">Manual Input</label>
             <Input
               value={inputFocused ? inputText : formatValuation(valuation)}
               onChange={handleInput}
               onFocus={handleInputFocus}
               onBlur={handleInputBlur}
-              className="font-mono-nums bg-secondary border-border text-sm"
+              placeholder="e.g. 12 for $12B"
+              className="font-mono-nums bg-secondary border-border text-sm h-8"
             />
-            <span className="text-xs text-muted-foreground mt-0.5 block">Enter value in $</span>
           </div>
-          <div className="text-center md:text-right">
-            <p className="text-2xl font-bold font-mono-nums text-primary">{formatValuation(valuation)}</p>
-          </div>
+        </div>
+        <Slider
+          value={[valuation]}
+          onValueChange={handleSlider}
+          min={500_000_000}
+          max={50_000_000_000}
+          step={100_000_000}
+          className="w-full"
+        />
+        <div className="flex justify-between text-xs text-muted-foreground mt-1">
+          <span>$500M</span><span>$50B</span>
         </div>
       </Card>
 
@@ -186,16 +175,6 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
         ))}
       </div>
 
-      {/* Combined summary banner */}
-      <Card className="p-4 gradient-emerald emerald-border-glow border">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
-          <Stat label="Total Outlay" value={formatCurrency(totalOutlay)} />
-          <Stat label="Net Invested" value={formatCurrency(totalNetInvested)} />
-          <Stat label="Combined Gross Value" value={formatCurrency(combinedGrossValue)} />
-          <Stat label="Combined Net Gain" value={formatCurrency(combinedNetGain)} highlight={combinedNetGain >= 0} negative={combinedNetGain < 0} />
-          <Stat label="Blended Multiple" value={formatMultiple(blendedMultiple)} highlight={blendedMultiple >= 1} negative={blendedMultiple < 1} />
-        </div>
-      </Card>
 
       {/* Section 3: Gains Visualization */}
       <Card className="p-5 bg-card border-border">
@@ -216,15 +195,6 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
           </AreaChart>
         </ResponsiveContainer>
       </Card>
-    </div>
-  );
-}
-
-function Stat({ label, value, highlight, negative }: { label: string; value: string; highlight?: boolean; negative?: boolean }) {
-  return (
-    <div>
-      <p className="text-xs text-muted-foreground mb-1">{label}</p>
-      <p className={`text-base font-semibold font-mono-nums ${highlight ? 'text-gain-positive' : ''} ${negative ? 'text-gain-negative' : ''}`}>{value}</p>
     </div>
   );
 }
