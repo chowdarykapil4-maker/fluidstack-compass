@@ -79,11 +79,18 @@ export default function PaperGainsCalculator({ cycles }: Props) {
   const totalNetInvested = cycles.reduce((s, c) => s + c.netInvested, 0);
   const blendedMultiple = (totalNetInvested + combinedNetGain) / totalOutlay;
 
-  const chartData = [{
-    name: "Net Gains at Selected Valuation",
-    "Cycle 1": Math.max(0, gains[0]?.netGain || 0),
-    "Cycle 2": Math.max(0, gains[1]?.netGain || 0),
-  }];
+  const VALUATION_POINTS = [500e6, 1e9, 2.5e9, 5e9, 7.5e9, 10e9, 12.5e9, 15e9, 17.5e9, 20e9, 25e9, 30e9, 35e9, 40e9, 50e9];
+  const areaChartData = VALUATION_POINTS.map(v => {
+    const g = cycles.map(c => calculateGains(c, v));
+    return {
+      valuation: v,
+      label: formatValuation(v),
+      "Cycle 1": Math.max(0, g[0]?.netGain || 0),
+      "Cycle 2": Math.max(0, g[1]?.netGain || 0),
+    };
+  });
+  const selectedLabel = formatValuation(valuation);
+  const currentMarkLabel = formatValuation(7_500_000_000);
 
   const handleSlider = (v: number[]) => {
     const val = v[0];
