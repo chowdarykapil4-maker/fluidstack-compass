@@ -2,19 +2,11 @@
   "digests": [
     {
       "week": "2026-04-01",
-      "label": "Week of April 1, 2026",
-      "generatedAt": "2026-04-01T21:30:56.432Z",
-      "quiet": false,
-      "summary": "1 item this week.",
-      "items": [
-        {
-          "headline": "FluidStack drops out of €10B France AI supercomputer project",
-          "summary": "Cloud startup FluidStack pulled out of the high-profile French data center project to focus on larger US contracts after recent wins with Anthropic and TeraWulf partnerships.",
-          "source": "Bloomberg",
-          "url": "https://www.bloomberg.com/news/articles/2026-03-18/fluidstack-drops-out-of-marquee-10-billion-ai-project-in-france",
-          "category": "market"
-        }
-      ]
+      "label": "March 2026",
+      "generatedAt": "2026-04-01T22:27:13.813Z",
+      "quiet": true,
+      "summary": "Quiet month — no major FluidStack news.",
+      "items": []
     }
   ]
 }
