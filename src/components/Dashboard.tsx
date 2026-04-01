@@ -48,7 +48,7 @@ function UnifiedCycleCard({ cycle, valuation }: { cycle: CycleData; valuation: n
           Net Invested: <span className="font-mono-nums text-foreground">{formatCurrency(cycle.netInvested)}</span>
         </p>
         <p className="text-primary text-xs italic">
-          {cycle.memberClass === 'A' ? '6.25× preferred return, no carry below threshold' : 'Carry from 1× on all gains (22.5%)'}
+          {cycle.memberClass === 'A' ? '20% carry up to 6.25×, then 22.5% above' : 'Carry from 1× on all gains (22.5%)'}
         </p>
       </div>
 
