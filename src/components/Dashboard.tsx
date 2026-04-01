@@ -182,11 +182,11 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
               value={[valuation]}
               onValueChange={handleSlider}
               min={500_000_000}
-              max={50_000_000_000}
-              step={100_000_000}
+              max={200_000_000_000}
+              step={500_000_000}
               className="flex-1"
             />
-            <span className="text-[11px] text-muted-foreground shrink-0">$50B</span>
+            <span className="text-[11px] text-muted-foreground shrink-0">$200B</span>
           </div>
           <Input
             value={inputFocused ? inputText : formatValuation(valuation)}
