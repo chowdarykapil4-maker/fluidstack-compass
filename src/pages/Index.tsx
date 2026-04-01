@@ -3,19 +3,17 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserProfile, DEFAULT_PROFILE, buildCycles, calculateGains, formatValuation, formatCurrency, formatMultiple } from "@/lib/calculations";
 import Dashboard from "@/components/Dashboard";
 import ExitScenarioModeler from "@/components/ExitScenarioModeler";
-import FundingTimeline, { DEFAULT_TIMELINE, TimelineEvent } from "@/components/FundingTimeline";
 import SettingsModal from "@/components/SettingsModal";
-import { BarChart3, Table2, Clock, TrendingUp, Settings } from "lucide-react";
+import { BarChart3, Table2, TrendingUp, Settings } from "lucide-react";
 
-const STORAGE_KEY = "fluidstack-tracker";
-const STORAGE_VERSION = 2;
+const STORAGE_KEY = "fluidstack-compass";
+const STORAGE_VERSION = 3;
 
 interface AppState {
   _version: number;
   currentValuation: number;
   profile: UserProfile;
   customExitRows: number[];
-  timelineEvents: TimelineEvent[];
   hasCompletedSetup: boolean;
 }
 
@@ -24,7 +22,6 @@ const defaultState: AppState = {
   currentValuation: 7_500_000_000,
   profile: DEFAULT_PROFILE,
   customExitRows: [],
-  timelineEvents: DEFAULT_TIMELINE,
   hasCompletedSetup: false,
 };
 
@@ -147,9 +144,6 @@ export default function Index() {
               <TabsTrigger value="scenarios" className="data-[state=active]:bg-primary/15 data-[state=active]:text-primary">
                 <Table2 className="w-4 h-4 mr-1.5" /> Exit Scenarios
               </TabsTrigger>
-              <TabsTrigger value="timeline" className="data-[state=active]:bg-primary/15 data-[state=active]:text-primary">
-                <Clock className="w-4 h-4 mr-1.5" /> Funding Timeline
-              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="dashboard">
@@ -166,13 +160,6 @@ export default function Index() {
                 currentValuation={state.currentValuation}
                 customExitRows={state.customExitRows}
                 onCustomExitRowsChange={(rows) => setState(s => ({ ...s, customExitRows: rows }))}
-              />
-            </TabsContent>
-
-            <TabsContent value="timeline">
-              <FundingTimeline
-                events={state.timelineEvents}
-                onEventsChange={(events) => setState(s => ({ ...s, timelineEvents: events }))}
               />
             </TabsContent>
           </Tabs>
