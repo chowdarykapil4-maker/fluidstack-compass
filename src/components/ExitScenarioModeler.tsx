@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -30,13 +30,11 @@ export default function ExitScenarioModeler({ cycles, currentValuation, customEx
     return { valuation: v, gains: g, combinedNetGain, combinedMultiple, carryRates, isCustom: customExitRows.includes(v) };
   });
 
-  const chartData = tableData.map(d => ({
-    valuation: d.valuation,
-    label: formatValuation(d.valuation),
-    "Cycle 1 Net Gain": d.gains[0]?.netGain || 0,
-    "Cycle 2 Net Gain": d.gains[1]?.netGain || 0,
-    "Combined Net Gain": d.combinedNetGain,
-  }));
+  const chartData = tableData.map(d => {
+    const entry: Record<string, number | string> = { valuation: d.valuation, label: formatValuation(d.valuation), "Combined Net Gain": d.combinedNetGain };
+    cycles.forEach((c, i) => { entry[`${c.label} Net Gain`] = d.gains[i]?.netGain || 0; });
+    return entry;
+  });
 
   const addRow = () => {
     const num = parseFloat(newVal.replace(/[^0-9.]/g, ''));
@@ -50,7 +48,9 @@ export default function ExitScenarioModeler({ cycles, currentValuation, customEx
   };
 
   // Cycle 1 crosses 6.25× at 6.25 × $1.2B = $7.5B
-  const c1StepUpValuation = cycles[0].entryValuation * 6.25;
+  const c1StepUpValuation = cycles.find(c => c.memberClass === 'A')
+    ? (cycles.find(c => c.memberClass === 'A')!.entryValuation * 6.25)
+    : null;
 
   return (
     <div className="space-y-6">
@@ -59,28 +59,31 @@ export default function ExitScenarioModeler({ cycles, currentValuation, customEx
           <thead>
             <tr className="border-b border-border">
               <th className="text-left py-2 px-2 text-muted-foreground font-medium" rowSpan={2}>Exit Valuation</th>
-              <th className="text-center py-1 px-2 text-primary font-medium border-b border-border" colSpan={4}>Cycle 1 — Class A</th>
-              <th className="text-center py-1 px-2 text-emerald-dim font-medium border-b border-border" colSpan={4}>Cycle 2 — Class B</th>
-              <th className="text-center py-1 px-2 text-foreground font-medium border-b border-border" colSpan={2}>Combined</th>
+              {cycles.map((c, i) => (
+                <th key={i} className="text-center py-1 px-2 font-medium border-b border-border" colSpan={4} style={{ color: i === 0 ? 'hsl(var(--primary))' : 'hsl(var(--emerald-dim))' }}>{c.label}</th>
+              ))}
+              {cycles.length > 1 && <th className="text-center py-1 px-2 text-foreground font-medium border-b border-border" colSpan={2}>Combined</th>}
               <th className="py-1 px-1" rowSpan={2}></th>
             </tr>
             <tr className="border-b border-border text-xs text-muted-foreground">
-              <th className="py-1 px-2">Gross Val</th>
-              <th className="py-1 px-2">Net Gain</th>
-              <th className="py-1 px-2">Multiple</th>
-              <th className="py-1 px-2">Carry Rate</th>
-              <th className="py-1 px-2">Gross Val</th>
-              <th className="py-1 px-2">Net Gain</th>
-              <th className="py-1 px-2">Multiple</th>
-              <th className="py-1 px-2">Carry Rate</th>
-              <th className="py-1 px-2">Net Gain</th>
-              <th className="py-1 px-2">Multiple</th>
+              {cycles.map((_, i) => (
+                <React.Fragment key={i}>
+                  <th className="py-1 px-2">Gross Val</th>
+                  <th className="py-1 px-2">Net Gain</th>
+                  <th className="py-1 px-2">Multiple</th>
+                  <th className="py-1 px-2">Carry Rate</th>
+                </React.Fragment>
+              ))}
+              {cycles.length > 1 && <>
+                <th className="py-1 px-2">Net Gain</th>
+                <th className="py-1 px-2">Multiple</th>
+              </>}
             </tr>
           </thead>
           <tbody>
             {tableData.map((row, i) => {
               const isCurrent = row.valuation === currentValuation;
-              const isStepUp = Math.abs(row.valuation - c1StepUpValuation) < 1e8;
+              const isStepUp = c1StepUpValuation ? Math.abs(row.valuation - c1StepUpValuation) < 1e8 : false;
               return (
                 <tr key={i} className={`border-b border-border/50 ${isCurrent ? 'bg-primary/10' : ''} ${isStepUp && !isCurrent ? 'bg-secondary/50' : ''}`}>
                   <td className="py-2 px-2 font-mono-nums font-medium">
@@ -88,16 +91,18 @@ export default function ExitScenarioModeler({ cycles, currentValuation, customEx
                     {isCurrent && <span className="ml-2 text-xs text-primary">● current</span>}
                     {isStepUp && <span className="ml-1 text-xs text-muted-foreground">⬆ 6.25×</span>}
                   </td>
-                  <td className="py-2 px-2 font-mono-nums text-right">{formatCurrency(row.gains[0]?.grossValue || 0)}</td>
-                  <td className={`py-2 px-2 font-mono-nums text-right ${(row.gains[0]?.netGain || 0) >= 0 ? 'text-gain-positive' : 'text-gain-negative'}`}>{formatCurrency(row.gains[0]?.netGain || 0)}</td>
-                  <td className="py-2 px-2 font-mono-nums text-right">{formatMultiple(row.gains[0]?.netMultipleOnOutlay || 0)}</td>
-                  <td className="py-2 px-2 text-right text-xs text-muted-foreground">{row.carryRates[0]}</td>
-                  <td className="py-2 px-2 font-mono-nums text-right">{formatCurrency(row.gains[1]?.grossValue || 0)}</td>
-                  <td className={`py-2 px-2 font-mono-nums text-right ${(row.gains[1]?.netGain || 0) >= 0 ? 'text-gain-positive' : 'text-gain-negative'}`}>{formatCurrency(row.gains[1]?.netGain || 0)}</td>
-                  <td className="py-2 px-2 font-mono-nums text-right">{formatMultiple(row.gains[1]?.netMultipleOnOutlay || 0)}</td>
-                  <td className="py-2 px-2 text-right text-xs text-muted-foreground">{row.carryRates[1]}</td>
-                  <td className={`py-2 px-2 font-mono-nums text-right font-semibold ${row.combinedNetGain >= 0 ? 'text-gain-positive' : 'text-gain-negative'}`}>{formatCurrency(row.combinedNetGain)}</td>
-                  <td className="py-2 px-2 font-mono-nums text-right font-semibold">{formatMultiple(row.combinedMultiple)}</td>
+                  {row.gains.map((g, j) => (
+                    <React.Fragment key={j}>
+                      <td className="py-2 px-2 font-mono-nums text-right">{formatCurrency(g.grossValue)}</td>
+                      <td className={`py-2 px-2 font-mono-nums text-right ${g.netGain >= 0 ? 'text-gain-positive' : 'text-gain-negative'}`}>{formatCurrency(g.netGain)}</td>
+                      <td className="py-2 px-2 font-mono-nums text-right">{formatMultiple(g.netMultipleOnOutlay)}</td>
+                      <td className="py-2 px-2 text-right text-xs text-muted-foreground">{row.carryRates[j]}</td>
+                    </React.Fragment>
+                  ))}
+                  {cycles.length > 1 && <>
+                    <td className={`py-2 px-2 font-mono-nums text-right font-semibold ${row.combinedNetGain >= 0 ? 'text-gain-positive' : 'text-gain-negative'}`}>{formatCurrency(row.combinedNetGain)}</td>
+                    <td className="py-2 px-2 font-mono-nums text-right font-semibold">{formatMultiple(row.combinedMultiple)}</td>
+                  </>}
                   <td className="py-2 px-1">
                     {row.isCustom && (
                       <button onClick={() => onCustomExitRowsChange(customExitRows.filter(v => v !== row.valuation))} className="text-muted-foreground hover:text-gain-negative transition-colors">
@@ -139,9 +144,10 @@ export default function ExitScenarioModeler({ cycles, currentValuation, customEx
             />
             <Legend />
             <ReferenceLine x={formatValuation(currentValuation)} stroke="hsl(152, 68%, 45%)" strokeDasharray="5 5" label={{ value: "Current", fill: "hsl(152, 68%, 45%)", fontSize: 11 }} />
-            <Line type="monotone" dataKey="Cycle 1 Net Gain" stroke="hsl(152, 68%, 45%)" strokeWidth={2} dot={{ r: 3 }} />
-            <Line type="monotone" dataKey="Cycle 2 Net Gain" stroke="hsl(152, 40%, 25%)" strokeWidth={2} dot={{ r: 3 }} />
-            <Line type="monotone" dataKey="Combined Net Gain" stroke="hsl(150, 10%, 92%)" strokeWidth={2.5} dot={{ r: 3 }} />
+            {cycles.length > 1 && <Line type="monotone" dataKey="Combined Net Gain" stroke="hsl(150, 10%, 92%)" strokeWidth={2.5} dot={{ r: 3 }} />}
+            {cycles.map((c, i) => (
+              <Line key={c.label} type="monotone" dataKey={`${c.label} Net Gain`} stroke={i === 0 ? "hsl(152, 68%, 45%)" : "hsl(152, 40%, 25%)"} strokeWidth={2} strokeDasharray={i > 0 ? "6 3" : undefined} dot={{ r: 3 }} />
+            ))}
           </LineChart>
         </ResponsiveContainer>
       </Card>
