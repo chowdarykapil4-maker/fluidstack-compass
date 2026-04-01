@@ -2,11 +2,10 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { DEFAULT_CYCLES, CycleData, calculateGains, formatValuation, formatCurrency, formatMultiple, parseValuationInput } from "@/lib/calculations";
-import InvestmentOverview from "@/components/InvestmentOverview";
-import PaperGainsCalculator from "@/components/PaperGainsCalculator";
+import Dashboard from "@/components/Dashboard";
 import ExitScenarioModeler from "@/components/ExitScenarioModeler";
 import FundingTimeline, { DEFAULT_TIMELINE, TimelineEvent } from "@/components/FundingTimeline";
-import { BarChart3, Calculator, Table2, Clock, TrendingUp } from "lucide-react";
+import { BarChart3, Table2, Clock, TrendingUp } from "lucide-react";
 
 const STORAGE_KEY = "fluidstack-tracker";
 
@@ -127,13 +126,10 @@ export default function Index() {
 
       {/* Main */}
       <main className="container max-w-7xl mx-auto px-4 py-6">
-        <Tabs defaultValue="overview" className="space-y-6">
+        <Tabs defaultValue="dashboard" className="space-y-6">
           <TabsList className="bg-secondary border border-border">
-            <TabsTrigger value="overview" className="data-[state=active]:bg-primary/15 data-[state=active]:text-primary">
-              <BarChart3 className="w-4 h-4 mr-1.5" /> Overview
-            </TabsTrigger>
-            <TabsTrigger value="calculator" className="data-[state=active]:bg-primary/15 data-[state=active]:text-primary">
-              <Calculator className="w-4 h-4 mr-1.5" /> Paper Gains
+            <TabsTrigger value="dashboard" className="data-[state=active]:bg-primary/15 data-[state=active]:text-primary">
+              <BarChart3 className="w-4 h-4 mr-1.5" /> Dashboard
             </TabsTrigger>
             <TabsTrigger value="scenarios" className="data-[state=active]:bg-primary/15 data-[state=active]:text-primary">
               <Table2 className="w-4 h-4 mr-1.5" /> Exit Scenarios
@@ -143,16 +139,8 @@ export default function Index() {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="overview">
-            <InvestmentOverview
-              cycles={state.cycles}
-              gains={gains}
-              currentValuation={state.currentValuation}
-            />
-          </TabsContent>
-
-          <TabsContent value="calculator">
-            <PaperGainsCalculator cycles={state.cycles} />
+          <TabsContent value="dashboard">
+            <Dashboard cycles={state.cycles} currentValuation={state.currentValuation} />
           </TabsContent>
 
           <TabsContent value="scenarios">
