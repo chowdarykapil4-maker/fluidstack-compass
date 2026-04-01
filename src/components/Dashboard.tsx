@@ -56,7 +56,7 @@ function UnifiedCycleCard({ cycle, valuation }: { cycle: CycleData; valuation: n
       <div className="space-y-2 text-sm">
         <Row label="Valuation Multiple" value={formatMultiple(gain.valuationMultiple)} />
         <Row label="Gross Value" value={formatCurrency(gain.grossValue)} />
-        <Row label="Gross Gain" value={formatCurrency(gain.grossGain)} highlight={isPositive} negative={!isPositive} />
+        <Row label="Gross Gain" value={formatCurrency(gain.grossGain)} highlight={gain.grossGain > 0} negative={gain.grossGain < 0} />
         {cycle.memberClass === 'A' ? (
           <>
             <Row label="Carry Tier 1 (20%, up to 6.25×)" value={`-${formatCurrency(gain.carryTier1)}`} muted />
