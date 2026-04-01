@@ -43,34 +43,66 @@ export const DEFAULT_CARRY: CarryStructure = {
   tier2Rate: 0.225,
 };
 
-export const DEFAULT_CYCLES: CycleData[] = [
-  {
-    label: "Cycle 1 — Series A",
-    memberClass: 'A',
-    fundEntity: "TMC Fund 550 LLC",
-    investmentDate: "2025-08-15",
-    roundName: "$200M Series A",
-    roundSize: 200_000_000,
-    entryValuation: 1_200_000_000,
-    totalOutlay: 15_750,
-    managementFee: 750,
-    managementFeeBreakdown: "Fund Mgmt 1.5% (side letter) + TMC Portfolio Co 3.5% = 5% effective",
-    netInvested: 15_000,
-  },
-  {
-    label: "Cycle 2 — Series B",
-    memberClass: 'B',
-    fundEntity: "TMC Fund 230 LLC",
-    investmentDate: "2026-01-29",
-    roundName: "$450M Series B",
-    roundSize: 450_000_000,
-    entryValuation: 7_500_000_000,
-    totalOutlay: 10_750,
-    managementFee: 750,
-    managementFeeBreakdown: "7.5% effective ($750 on $10,000 commit)",
-    netInvested: 10_000,
-  },
-];
+export interface UserProfile {
+  name: string;
+  cycle1Participating: boolean;
+  cycle1Committed: number;
+  cycle2Participating: boolean;
+  cycle2Committed: number;
+}
+
+export const DEFAULT_PROFILE: UserProfile = {
+  name: "Investor",
+  cycle1Participating: true,
+  cycle1Committed: 15000,
+  cycle2Participating: true,
+  cycle2Committed: 10000,
+};
+
+export const CYCLE1_FEE_RATE = 0.05;
+export const CYCLE2_FEE_RATE = 0.075;
+
+export function buildCycles(profile: UserProfile): CycleData[] {
+  const cycles: CycleData[] = [];
+
+  if (profile.cycle1Participating) {
+    const fee = profile.cycle1Committed * CYCLE1_FEE_RATE;
+    cycles.push({
+      label: "Cycle 1 — Series A",
+      memberClass: 'A',
+      fundEntity: "TMC Fund 550 LLC",
+      investmentDate: "2025-08-15",
+      roundName: "$200M Series A",
+      roundSize: 200_000_000,
+      entryValuation: 1_200_000_000,
+      totalOutlay: profile.cycle1Committed + fee,
+      managementFee: fee,
+      managementFeeBreakdown: `Fund Mgmt 1.5% (side letter) + TMC Portfolio Co 3.5% = 5% effective`,
+      netInvested: profile.cycle1Committed,
+    });
+  }
+
+  if (profile.cycle2Participating) {
+    const fee = profile.cycle2Committed * CYCLE2_FEE_RATE;
+    cycles.push({
+      label: "Cycle 2 — Series B",
+      memberClass: 'B',
+      fundEntity: "TMC Fund 230 LLC",
+      investmentDate: "2026-01-29",
+      roundName: "$450M Series B",
+      roundSize: 450_000_000,
+      entryValuation: 7_500_000_000,
+      totalOutlay: profile.cycle2Committed + fee,
+      managementFee: fee,
+      managementFeeBreakdown: `7.5% effective ($${fee.toFixed(0)} on $${profile.cycle2Committed.toLocaleString()} commit)`,
+      netInvested: profile.cycle2Committed,
+    });
+  }
+
+  return cycles;
+}
+
+export const DEFAULT_CYCLES: CycleData[] = buildCycles(DEFAULT_PROFILE);
 
 /**
  * Class A (Cycle 1): TWO-TIER carry.
