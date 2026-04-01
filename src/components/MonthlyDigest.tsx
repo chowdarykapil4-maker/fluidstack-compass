@@ -74,10 +74,13 @@ export default function MonthlyDigest() {
 
   return (
     <Card className="bg-card border-border rounded-lg p-3 sm:p-4 space-y-1.5">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between border-b border-primary/10 pb-3 mb-3">
         <div className="flex items-center gap-2">
           <Newspaper size={14} className="text-primary" />
-          <span className="text-sm font-medium text-foreground">{latest.label} News Digest</span>
+          <div className="flex flex-col">
+            <span className="text-[10px] uppercase tracking-wider text-primary/50">News Digest</span>
+            <span className="text-base font-semibold text-foreground">{latest.label}</span>
+          </div>
         </div>
         <span className="text-[10px] text-muted-foreground">Updated monthly</span>
       </div>
