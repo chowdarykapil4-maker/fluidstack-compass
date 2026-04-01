@@ -41,7 +41,7 @@ export default function SettingsModal({ open, onOpenChange, profile, onSave, isF
 
   return (
     <Dialog open={open} onOpenChange={isFirstTime ? undefined : onOpenChange}>
-      <DialogContent className="sm:max-w-md bg-card border-border">
+      <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-md max-h-[90vh] overflow-y-auto rounded-lg p-4 sm:p-6 bg-card border-border">
         <DialogHeader>
           <DialogTitle className="text-foreground">{isFirstTime ? "Welcome — Set Up Your Profile" : "Your Investment Profile"}</DialogTitle>
         </DialogHeader>
