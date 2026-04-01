@@ -63,11 +63,13 @@ function Row({ label, value, muted, bold, highlight, negative, large }: {
   );
 }
 
-export default function Dashboard({ cycles, currentValuation }: Props) {
+export default function Dashboard({ cycles, currentValuation, onValuationChange }: Props) {
   const [detailsOpen, setDetailsOpen] = useState(false);
-  const [valuation, setValuation] = useState(currentValuation);
   const [inputText, setInputText] = useState("");
   const [inputFocused, setInputFocused] = useState(false);
+
+  const valuation = currentValuation;
+  const setValuation = onValuationChange;
 
   const gains = cycles.map(c => calculateGains(c, valuation));
   const totalOutlay = cycles.reduce((s, c) => s + c.totalOutlay, 0);
@@ -87,7 +89,6 @@ export default function Dashboard({ cycles, currentValuation }: Props) {
     };
   });
   const selectedLabel = formatValuation(valuation);
-  const currentMarkLabel = formatValuation(currentValuation);
 
   const handleSlider = (v: number[]) => setValuation(v[0]);
 

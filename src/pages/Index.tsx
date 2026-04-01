@@ -1,7 +1,6 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Input } from "@/components/ui/input";
-import { DEFAULT_CYCLES, CycleData, calculateGains, formatValuation, formatCurrency, formatMultiple, parseValuationInput } from "@/lib/calculations";
+import { DEFAULT_CYCLES, CycleData, calculateGains, formatValuation, formatCurrency, formatMultiple } from "@/lib/calculations";
 import Dashboard from "@/components/Dashboard";
 import ExitScenarioModeler from "@/components/ExitScenarioModeler";
 import FundingTimeline, { DEFAULT_TIMELINE, TimelineEvent } from "@/components/FundingTimeline";
@@ -34,8 +33,6 @@ function loadState(): AppState {
 export default function Index() {
   const [state, setState] = useState<AppState>(loadState);
   const [lastUpdated, setLastUpdated] = useState(new Date());
-  const [valFocused, setValFocused] = useState(false);
-  const [valInput, setValInput] = useState("");
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -44,22 +41,8 @@ export default function Index() {
 
   const gains = state.cycles.map(c => calculateGains(c, state.currentValuation));
 
-  const handleValFocus = () => {
-    setValFocused(true);
-    setValInput(String(state.currentValuation));
-  };
-
-  const handleValBlur = () => {
-    setValFocused(false);
-    const parsed = parseValuationInput(valInput);
-    if (parsed) setState(s => ({ ...s, currentValuation: parsed }));
-  };
-
-  const handleValChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const raw = e.target.value.replace(/[^0-9.]/g, '');
-    setValInput(raw);
-    const parsed = parseValuationInput(raw);
-    if (parsed) setState(s => ({ ...s, currentValuation: parsed }));
+  const handleValuationChange = (val: number) => {
+    setState(s => ({ ...s, currentValuation: val }));
   };
 
   return (
@@ -76,19 +59,9 @@ export default function Index() {
               <p className="text-xs text-muted-foreground">Root Capital LLC SPV</p>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <div>
-              <label className="text-xs text-muted-foreground block">Current Mark:</label>
-              <Input
-                value={valFocused ? valInput : formatValuation(state.currentValuation)}
-                onChange={handleValChange}
-                onFocus={handleValFocus}
-                onBlur={handleValBlur}
-                className="w-40 font-mono-nums bg-secondary border-border text-sm"
-              />
-              <span className="text-xs text-muted-foreground mt-0.5 block">Enter value in $</span>
-            </div>
-          </div>
+          <span className="text-sm font-mono-nums text-primary font-semibold bg-primary/10 px-3 py-1.5 rounded-md border border-primary/20">
+            Mark: {formatValuation(state.currentValuation)}
+          </span>
         </div>
       </header>
 
@@ -140,7 +113,11 @@ export default function Index() {
           </TabsList>
 
           <TabsContent value="dashboard">
-            <Dashboard cycles={state.cycles} currentValuation={state.currentValuation} />
+            <Dashboard
+              cycles={state.cycles}
+              currentValuation={state.currentValuation}
+              onValuationChange={handleValuationChange}
+            />
           </TabsContent>
 
           <TabsContent value="scenarios">
