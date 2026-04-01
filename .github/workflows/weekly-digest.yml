@@ -3,7 +3,7 @@ name: Weekly FluidStack Digest
 on:
   schedule:
     # Every Friday at 9am Pacific (4pm UTC)
-    - cron: '0 16 * * 5'
+    - cron: '0 16 1 * *'
   workflow_dispatch: # Manual trigger for testing
 
 permissions:
