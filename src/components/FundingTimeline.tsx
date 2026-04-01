@@ -133,14 +133,50 @@ export default function FundingTimeline({ events, onEventsChange }: Props) {
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={valuationData}>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(160 10% 16%)" />
-              <XAxis dataKey="date" tick={{ fill: 'hsl(150 5% 55%)', fontSize: 11 }} />
+              <XAxis
+                dataKey="timestamp"
+                type="number"
+                domain={['dataMin', 'dataMax']}
+                scale="time"
+                tickFormatter={(ts) => {
+                  const d = new Date(ts);
+                  return d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+                }}
+                tick={{ fill: 'hsl(150 5% 55%)', fontSize: 11 }}
+              />
               <YAxis tick={{ fill: 'hsl(150 5% 55%)', fontSize: 11 }} tickFormatter={(v) => formatValuation(v)} />
               <Tooltip
                 contentStyle={{ background: 'hsl(160 12% 9%)', border: '1px solid hsl(160 10% 16%)', borderRadius: 8, color: 'hsl(150 10% 92%)' }}
                 formatter={(value: number) => formatValuation(value)}
-                labelFormatter={(label) => `Date: ${label}`}
+                labelFormatter={(ts) => {
+                  const d = new Date(ts);
+                  return d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+                }}
               />
-              <Line type="monotone" dataKey="valuation" stroke="hsl(152, 68%, 45%)" strokeWidth={3} dot={{ r: 5, fill: 'hsl(152, 68%, 45%)' }} />
+              <Line
+                type="monotone"
+                dataKey="valuation"
+                stroke="hsl(152, 68%, 45%)"
+                strokeWidth={3}
+                dot={(props: any) => {
+                  const { cx, cy, payload } = props;
+                  if (payload.isUserEntry) {
+                    return (
+                      <g key={`dot-${payload.timestamp}`}>
+                        <circle cx={cx} cy={cy} r={12} fill="hsl(152, 68%, 45%)" fillOpacity={0.15} stroke="hsl(152, 68%, 45%)" strokeWidth={1} strokeOpacity={0.3} />
+                        <circle cx={cx} cy={cy} r={8} fill="hsl(152, 68%, 45%)" stroke="hsl(152, 68%, 45%)" strokeWidth={3} strokeOpacity={0.3} />
+                        <text x={cx} y={cy - 18} textAnchor="middle" fill="hsl(152, 68%, 45%)" fontSize={11} fontWeight={600}>{payload.label}</text>
+                      </g>
+                    );
+                  }
+                  return (
+                    <g key={`dot-${payload.timestamp}`}>
+                      <circle cx={cx} cy={cy} r={5} fill="hsl(152, 68%, 45%)" />
+                      <text x={cx} y={cy - 12} textAnchor="middle" fill="hsl(150 5% 55%)" fontSize={10}>{payload.label}</text>
+                    </g>
+                  );
+                }}
+              />
             </LineChart>
           </ResponsiveContainer>
         </Card>
