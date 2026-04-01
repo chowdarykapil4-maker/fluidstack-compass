@@ -37,7 +37,7 @@ export default function ExitScenarioModeler({ cycles, currentValuation, customEx
   });
 
   const chartData = tableData.map(d => {
-    const entry: Record<string, number | string> = { valuation: d.valuation, label: formatValuation(d.valuation), "Combined": d.combinedNetGain };
+    const entry: Record<string, number | string> = { valuation: d.valuation, label: formatValuation(d.valuation) };
     cycles.forEach((c, i) => { entry[shortLabel(c)] = d.gains[i]?.netGain || 0; });
     return entry;
   });
