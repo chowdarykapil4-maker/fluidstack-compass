@@ -50,7 +50,9 @@ export default function ExitScenarioModeler({ cycles, currentValuation, customEx
   };
 
   // Cycle 1 crosses 6.25× at 6.25 × $1.2B = $7.5B
-  const c1StepUpValuation = cycles[0].entryValuation * 6.25;
+  const c1StepUpValuation = cycles.find(c => c.memberClass === 'A')
+    ? (cycles.find(c => c.memberClass === 'A')!.entryValuation * 6.25)
+    : null;
 
   return (
     <div className="space-y-6">
