@@ -93,6 +93,38 @@ export default function Index() {
         </div>
       </header>
 
+      {/* Quick Stats Banner */}
+      {(() => {
+        const totalOutlay = state.cycles.reduce((s, c) => s + c.totalOutlay, 0);
+        const totalNetInvested = state.cycles.reduce((s, c) => s + c.netInvested, 0);
+        const combinedGrossValue = gains.reduce((s, g) => s + g.grossValue, 0);
+        const combinedNetPosition = gains.reduce((s, g) => s + g.grossValue - g.totalCarry, 0);
+        const blendedMultiple = combinedNetPosition / totalOutlay;
+        const isPositive = combinedGrossValue >= totalNetInvested;
+        const holdingMonths = (cycle: CycleData) =>
+          Math.round((Date.now() - new Date(cycle.investmentDate).getTime()) / (1000 * 60 * 60 * 24 * 30.44));
+        const Divider = () => <span className="border-r border-border/50 h-4" />;
+        return (
+          <div className="py-2 px-4 bg-secondary/50 border-b border-border">
+            <div className="container max-w-7xl mx-auto flex items-center justify-center gap-6 text-xs flex-wrap">
+              <span className="text-muted-foreground">Total Outlay: <span className="font-mono-nums text-foreground">{formatCurrency(totalOutlay)}</span></span>
+              <Divider />
+              <span className="text-muted-foreground">Net Invested: <span className="font-mono-nums text-foreground">{formatCurrency(totalNetInvested)}</span></span>
+              <Divider />
+              <span className="text-muted-foreground">Gross Value: <span className={`font-mono-nums ${isPositive ? 'text-gain-positive' : 'text-gain-negative'}`}>{formatCurrency(combinedGrossValue)}</span></span>
+              <Divider />
+              <span className="text-muted-foreground">Net Multiple: <span className={`font-mono-nums ${blendedMultiple >= 1 ? 'text-gain-positive' : 'text-gain-negative'}`}>{formatMultiple(blendedMultiple)}</span></span>
+              <Divider />
+              <span className="text-muted-foreground">C1 Holding: <span className="font-mono-nums text-foreground">{holdingMonths(state.cycles[0])} mo</span></span>
+              <Divider />
+              <span className="text-muted-foreground">C2 Holding: <span className="font-mono-nums text-foreground">{holdingMonths(state.cycles[1])} mo</span></span>
+              <Divider />
+              <span className="text-muted-foreground">Updated: {lastUpdated.toLocaleString()}</span>
+            </div>
+          </div>
+        );
+      })()}
+
       {/* Main */}
       <main className="container max-w-7xl mx-auto px-4 py-6">
         <Tabs defaultValue="overview" className="space-y-6">
