@@ -2,11 +2,10 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { DEFAULT_CYCLES, CycleData, calculateGains, formatValuation, formatCurrency, formatMultiple, parseValuationInput } from "@/lib/calculations";
-import InvestmentOverview from "@/components/InvestmentOverview";
-import PaperGainsCalculator from "@/components/PaperGainsCalculator";
+import Dashboard from "@/components/Dashboard";
 import ExitScenarioModeler from "@/components/ExitScenarioModeler";
 import FundingTimeline, { DEFAULT_TIMELINE, TimelineEvent } from "@/components/FundingTimeline";
-import { BarChart3, Calculator, Table2, Clock, TrendingUp } from "lucide-react";
+import { BarChart3, Table2, Clock, TrendingUp } from "lucide-react";
 
 const STORAGE_KEY = "fluidstack-tracker";
 
