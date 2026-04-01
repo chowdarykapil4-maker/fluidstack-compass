@@ -77,10 +77,9 @@ export const DEFAULT_CYCLES: CycleData[] = [
  *   - ≤ 6.25×: carry = $0
  *   - > 6.25×: 22.5% on incremental gain above 6.25×
  *
- * Class B (Cycle 2): Return of capital (1×) first, then carry on all gains.
+ * Class B (Cycle 2): Return of capital (1×) first, then flat 22.5% carry on ALL gains.
  *   - ≤ 1×: carry = $0
- *   - 1× to 6.25×: 20% on gains
- *   - > 6.25×: 20% on gains from 1×–6.25×, 22.5% on gains above 6.25×
+ *   - > 1×: 22.5% on all gains
  */
 export function calculateGains(
   cycle: CycleData,
