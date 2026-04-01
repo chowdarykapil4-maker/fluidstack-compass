@@ -179,20 +179,24 @@ export default function PaperGainsCalculator({ cycles }: Props) {
       </Card>
 
       <Card className="p-5 bg-card border-border">
-        <h4 className="font-semibold text-foreground mb-4">Net Gains Breakdown</h4>
-        <ResponsiveContainer width="100%" height={250}>
-          <BarChart data={chartData}>
+        <h4 className="font-semibold text-foreground mb-4">Net Gains Across Valuations</h4>
+        <ResponsiveContainer width="100%" height={300}>
+          <AreaChart data={areaChartData}>
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(160 10% 16%)" />
-            <XAxis dataKey="name" tick={{ fill: 'hsl(150 5% 55%)', fontSize: 12 }} />
+            <XAxis dataKey="label" tick={{ fill: 'hsl(150 5% 55%)', fontSize: 11 }} interval="preserveStartEnd" />
             <YAxis tick={{ fill: 'hsl(150 5% 55%)', fontSize: 12 }} tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
             <Tooltip
               contentStyle={{ background: 'hsl(160 12% 9%)', border: '1px solid hsl(160 10% 16%)', borderRadius: 8, color: 'hsl(150 10% 92%)' }}
               formatter={(value: number) => formatCurrency(value)}
             />
             <Legend />
-            <Bar dataKey="Cycle 1" fill="hsl(152, 68%, 45%)" radius={[4, 4, 0, 0]} />
-            <Bar dataKey="Cycle 2" fill="hsl(152, 40%, 25%)" radius={[4, 4, 0, 0]} />
-          </BarChart>
+            <Area type="monotone" dataKey="Cycle 1" stackId="1" fill="hsl(152, 68%, 45%)" fillOpacity={0.3} stroke="hsl(152, 68%, 45%)" />
+            <Area type="monotone" dataKey="Cycle 2" stackId="1" fill="hsl(152, 40%, 25%)" fillOpacity={0.3} stroke="hsl(152, 40%, 35%)" />
+            <ReferenceLine x={selectedLabel} stroke="hsl(152, 68%, 45%)" strokeDasharray="4 4" label={{ value: "Selected", fill: "hsl(152, 68%, 45%)", fontSize: 11, position: "top" }} />
+            {valuation !== 7_500_000_000 && (
+              <ReferenceLine x={currentMarkLabel} stroke="hsl(150 5% 55%)" strokeDasharray="4 4" label={{ value: "Current", fill: "hsl(150 5% 55%)", fontSize: 11, position: "top" }} />
+            )}
+          </AreaChart>
         </ResponsiveContainer>
       </Card>
     </div>
