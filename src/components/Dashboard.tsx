@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { CycleData, calculateGains, formatCurrency, formatValuation, formatMultiple, parseValuationInput } from "@/lib/calculations";
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from "recharts";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from "recharts";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
@@ -78,13 +78,16 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
   const totalOutlay = cycles.reduce((s, c) => s + c.totalOutlay, 0);
   
 
-  const areaChartData = VALUATION_POINTS.map(v => {
+  const chartData = VALUATION_POINTS.map(v => {
     const g = cycles.map(c => calculateGains(c, v));
+    const c1Net = g[0]?.netGain || 0;
+    const c2Net = g[1]?.netGain || 0;
     return {
       valuation: v,
       label: formatValuation(v),
-      "Cycle 1": Math.max(0, g[0]?.netGain || 0),
-      "Cycle 2": Math.max(0, g[1]?.netGain || 0),
+      "Cycle 1 (Class A)": c1Net,
+      "Cycle 2 (Class B)": c2Net,
+      "Combined": c1Net + c2Net,
     };
   });
   const selectedLabel = formatValuation(valuation);
@@ -186,19 +189,20 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
       <Card className="p-5 bg-card border-border">
         <h4 className="font-semibold text-foreground mb-4">Net Gains Across Valuations</h4>
         <ResponsiveContainer width="100%" height={300}>
-          <AreaChart data={areaChartData}>
+          <LineChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(160 10% 16%)" />
             <XAxis dataKey="label" tick={{ fill: 'hsl(150 5% 55%)', fontSize: 11 }} interval="preserveStartEnd" />
-            <YAxis tick={{ fill: 'hsl(150 5% 55%)', fontSize: 12 }} tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
+            <YAxis tick={{ fill: 'hsl(150 5% 55%)', fontSize: 12 }} tickFormatter={(v) => v >= 1000 ? `$${(v / 1000).toFixed(0)}k` : `$${v.toFixed(0)}`} />
             <Tooltip
               contentStyle={{ background: 'hsl(160 12% 9%)', border: '1px solid hsl(160 10% 16%)', borderRadius: 8, color: 'hsl(150 10% 92%)' }}
               formatter={(value: number) => formatCurrency(value)}
             />
             <Legend />
-            <Area type="monotone" dataKey="Cycle 1" stackId="1" fill="hsl(152, 68%, 45%)" fillOpacity={0.3} stroke="hsl(152, 68%, 45%)" />
-            <Area type="monotone" dataKey="Cycle 2" stackId="1" fill="hsl(152, 40%, 25%)" fillOpacity={0.3} stroke="hsl(152, 40%, 35%)" />
             <ReferenceLine x={selectedLabel} stroke="hsl(152, 68%, 45%)" strokeDasharray="4 4" label={{ value: "Selected", fill: "hsl(152, 68%, 45%)", fontSize: 11, position: "top" }} />
-          </AreaChart>
+            <Line type="monotone" dataKey="Combined" stroke="hsl(150, 10%, 92%)" strokeWidth={2.5} dot={{ r: 3 }} />
+            <Line type="monotone" dataKey="Cycle 1 (Class A)" stroke="hsl(152, 68%, 45%)" strokeWidth={2} dot={{ r: 2.5 }} />
+            <Line type="monotone" dataKey="Cycle 2 (Class B)" stroke="hsl(152, 40%, 35%)" strokeWidth={2} strokeDasharray="6 3" dot={{ r: 2.5 }} />
+          </LineChart>
         </ResponsiveContainer>
       </Card>
     </div>
