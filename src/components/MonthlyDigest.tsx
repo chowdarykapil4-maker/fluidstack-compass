@@ -77,7 +77,7 @@ export default function MonthlyDigest() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Newspaper size={14} className="text-primary" />
-          <span className="text-sm font-medium text-foreground">{latest.label}</span>
+          <span className="text-sm font-medium text-foreground">{latest.label} News Digest</span>
         </div>
         <span className="text-[10px] text-muted-foreground">Updated monthly</span>
       </div>
