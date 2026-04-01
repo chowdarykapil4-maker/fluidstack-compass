@@ -29,7 +29,7 @@ interface Props {
   onValuationChange: (val: number) => void;
 }
 
-const VALUATION_POINTS = [1e9, 2.5e9, 5e9, 7.5e9, 10e9, 15e9, 20e9, 30e9, 50e9, 75e9, 100e9];
+const VALUATION_POINTS = [1e9, 2.5e9, 5e9, 7.5e9, 10e9, 15e9, 20e9, 30e9, 50e9, 75e9, 100e9, 150e9, 200e9];
 
 const VALUATION_PRESETS: { value: number; label: string }[] = [
   { value: 7_500_000_000, label: "$7.5B" },
@@ -156,14 +156,14 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
   const handleInputBlur = () => {
     setInputFocused(false);
     const parsed = parseValuationInput(inputText);
-    if (parsed && parsed >= 500_000_000 && parsed <= 50_000_000_000) setValuation(parsed);
+    if (parsed && parsed >= 500_000_000 && parsed <= 200_000_000_000) setValuation(parsed);
   };
 
   const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value.replace(/[^0-9.]/g, "");
     setInputText(raw);
     const parsed = parseValuationInput(raw);
-    if (parsed && parsed >= 500_000_000 && parsed <= 50_000_000_000) setValuation(parsed);
+    if (parsed && parsed >= 500_000_000 && parsed <= 200_000_000_000) setValuation(parsed);
   };
 
   return (
@@ -182,11 +182,11 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
               value={[valuation]}
               onValueChange={handleSlider}
               min={500_000_000}
-              max={50_000_000_000}
-              step={100_000_000}
+              max={200_000_000_000}
+              step={500_000_000}
               className="flex-1"
             />
-            <span className="text-[11px] text-muted-foreground shrink-0">$50B</span>
+            <span className="text-[11px] text-muted-foreground shrink-0">$200B</span>
           </div>
           <Input
             value={inputFocused ? inputText : formatValuation(valuation)}
