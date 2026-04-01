@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
 import { CycleData, calculateGains, formatCurrency, formatValuation, formatMultiple, parseValuationInput } from "@/lib/calculations";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from "recharts";
 
 interface Props {
   cycles: CycleData[];
@@ -79,11 +79,18 @@ export default function PaperGainsCalculator({ cycles }: Props) {
   const totalNetInvested = cycles.reduce((s, c) => s + c.netInvested, 0);
   const blendedMultiple = (totalNetInvested + combinedNetGain) / totalOutlay;
 
-  const chartData = [{
-    name: "Net Gains at Selected Valuation",
-    "Cycle 1": Math.max(0, gains[0]?.netGain || 0),
-    "Cycle 2": Math.max(0, gains[1]?.netGain || 0),
-  }];
+  const VALUATION_POINTS = [500e6, 1e9, 2.5e9, 5e9, 7.5e9, 10e9, 12.5e9, 15e9, 17.5e9, 20e9, 25e9, 30e9, 35e9, 40e9, 50e9];
+  const areaChartData = VALUATION_POINTS.map(v => {
+    const g = cycles.map(c => calculateGains(c, v));
+    return {
+      valuation: v,
+      label: formatValuation(v),
+      "Cycle 1": Math.max(0, g[0]?.netGain || 0),
+      "Cycle 2": Math.max(0, g[1]?.netGain || 0),
+    };
+  });
+  const selectedLabel = formatValuation(valuation);
+  const currentMarkLabel = formatValuation(7_500_000_000);
 
   const handleSlider = (v: number[]) => {
     const val = v[0];
@@ -172,20 +179,24 @@ export default function PaperGainsCalculator({ cycles }: Props) {
       </Card>
 
       <Card className="p-5 bg-card border-border">
-        <h4 className="font-semibold text-foreground mb-4">Net Gains Breakdown</h4>
-        <ResponsiveContainer width="100%" height={250}>
-          <BarChart data={chartData}>
+        <h4 className="font-semibold text-foreground mb-4">Net Gains Across Valuations</h4>
+        <ResponsiveContainer width="100%" height={300}>
+          <AreaChart data={areaChartData}>
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(160 10% 16%)" />
-            <XAxis dataKey="name" tick={{ fill: 'hsl(150 5% 55%)', fontSize: 12 }} />
+            <XAxis dataKey="label" tick={{ fill: 'hsl(150 5% 55%)', fontSize: 11 }} interval="preserveStartEnd" />
             <YAxis tick={{ fill: 'hsl(150 5% 55%)', fontSize: 12 }} tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
             <Tooltip
               contentStyle={{ background: 'hsl(160 12% 9%)', border: '1px solid hsl(160 10% 16%)', borderRadius: 8, color: 'hsl(150 10% 92%)' }}
               formatter={(value: number) => formatCurrency(value)}
             />
             <Legend />
-            <Bar dataKey="Cycle 1" fill="hsl(152, 68%, 45%)" radius={[4, 4, 0, 0]} />
-            <Bar dataKey="Cycle 2" fill="hsl(152, 40%, 25%)" radius={[4, 4, 0, 0]} />
-          </BarChart>
+            <Area type="monotone" dataKey="Cycle 1" stackId="1" fill="hsl(152, 68%, 45%)" fillOpacity={0.3} stroke="hsl(152, 68%, 45%)" />
+            <Area type="monotone" dataKey="Cycle 2" stackId="1" fill="hsl(152, 40%, 25%)" fillOpacity={0.3} stroke="hsl(152, 40%, 35%)" />
+            <ReferenceLine x={selectedLabel} stroke="hsl(152, 68%, 45%)" strokeDasharray="4 4" label={{ value: "Selected", fill: "hsl(152, 68%, 45%)", fontSize: 11, position: "top" }} />
+            {valuation !== 7_500_000_000 && (
+              <ReferenceLine x={currentMarkLabel} stroke="hsl(150 5% 55%)" strokeDasharray="4 4" label={{ value: "Current", fill: "hsl(150 5% 55%)", fontSize: 11, position: "top" }} />
+            )}
+          </AreaChart>
         </ResponsiveContainer>
       </Card>
     </div>
