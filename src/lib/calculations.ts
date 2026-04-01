@@ -56,10 +56,10 @@ export interface UserProfile {
 
 export const DEFAULT_PROFILE: UserProfile = {
   name: "Investor",
-  cycle1Participating: true,
-  cycle1Committed: 15000,
-  cycle2Participating: true,
-  cycle2Committed: 10000,
+  cycle1Participating: false,
+  cycle1Committed: 0,
+  cycle2Participating: false,
+  cycle2Committed: 0,
 };
 
 export const CYCLE1_FEE_RATE = 0.05;

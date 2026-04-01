@@ -27,8 +27,12 @@ export default function SettingsModal({ open, onOpenChange, profile, onSave, isF
   const c2Fee = draft.cycle2Committed * CYCLE2_FEE_RATE;
   const c2Outlay = draft.cycle2Committed + c2Fee;
 
+  const hasValidCycle =
+    (draft.cycle1Participating && draft.cycle1Committed > 0) ||
+    (draft.cycle2Participating && draft.cycle2Committed > 0);
+
   const handleSave = () => {
-    if (!draft.cycle1Participating && !draft.cycle2Participating) return;
+    if (!hasValidCycle) return;
     onSave(draft);
     onOpenChange(false);
   };
@@ -128,8 +132,8 @@ export default function SettingsModal({ open, onOpenChange, profile, onSave, isF
             )}
           </div>
 
-          {!draft.cycle1Participating && !draft.cycle2Participating && (
-            <p className="text-xs text-gain-negative">Enable at least one cycle to save.</p>
+          {!hasValidCycle && (
+            <p className="text-xs text-gain-negative">Enable at least one cycle with a committed amount to save.</p>
           )}
 
           <div className="flex items-center justify-between pt-2">
@@ -138,7 +142,7 @@ export default function SettingsModal({ open, onOpenChange, profile, onSave, isF
             </button>
             <Button
               onClick={handleSave}
-              disabled={!draft.cycle1Participating && !draft.cycle2Participating}
+              disabled={!hasValidCycle}
               className="px-6"
             >
               {isFirstTime ? "Get Started" : "Save"}
