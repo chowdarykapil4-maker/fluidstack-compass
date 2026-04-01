@@ -36,8 +36,16 @@ export default function FundingTimeline({ events, onEventsChange }: Props) {
 
   const valuationData = events
     .filter(e => e.valuation)
-    .map(e => ({ date: e.date, valuation: e.valuation!, label: formatValuation(e.valuation!) }))
-    .sort((a, b) => a.date.localeCompare(b.date));
+    .map(e => {
+      const d = new Date(e.date + "-01");
+      return {
+        timestamp: d.getTime(),
+        valuation: e.valuation!,
+        label: formatValuation(e.valuation!),
+        isUserEntry: !!e.isUserEntry,
+      };
+    })
+    .sort((a, b) => a.timestamp - b.timestamp);
 
   const addEvent = () => {
     const evt: TimelineEvent = {
