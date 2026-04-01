@@ -182,16 +182,6 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
         ))}
       </div>
 
-      {/* Combined summary banner */}
-      <Card className="p-4 gradient-emerald emerald-border-glow border">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
-          <Stat label="Total Outlay" value={formatCurrency(totalOutlay)} />
-          <Stat label="Net Invested" value={formatCurrency(totalNetInvested)} />
-          <Stat label="Combined Gross Value" value={formatCurrency(combinedGrossValue)} />
-          <Stat label="Combined Net Gain" value={formatCurrency(combinedNetGain)} highlight={combinedNetGain >= 0} negative={combinedNetGain < 0} />
-          <Stat label="Blended Multiple" value={formatMultiple(blendedMultiple)} highlight={blendedMultiple >= 1} negative={blendedMultiple < 1} />
-        </div>
-      </Card>
 
       {/* Section 3: Gains Visualization */}
       <Card className="p-5 bg-card border-border">
