@@ -85,7 +85,7 @@ export default function ExitScenarioModeler({ cycles, currentValuation, customEx
           <tbody>
             {tableData.map((row, i) => {
               const isCurrent = row.valuation === currentValuation;
-              const isStepUp = Math.abs(row.valuation - c1StepUpValuation) < 1e8;
+              const isStepUp = c1StepUpValuation ? Math.abs(row.valuation - c1StepUpValuation) < 1e8 : false;
               return (
                 <tr key={i} className={`border-b border-border/50 ${isCurrent ? 'bg-primary/10' : ''} ${isStepUp && !isCurrent ? 'bg-secondary/50' : ''}`}>
                   <td className="py-2 px-2 font-mono-nums font-medium">
@@ -93,16 +93,18 @@ export default function ExitScenarioModeler({ cycles, currentValuation, customEx
                     {isCurrent && <span className="ml-2 text-xs text-primary">● current</span>}
                     {isStepUp && <span className="ml-1 text-xs text-muted-foreground">⬆ 6.25×</span>}
                   </td>
-                  <td className="py-2 px-2 font-mono-nums text-right">{formatCurrency(row.gains[0]?.grossValue || 0)}</td>
-                  <td className={`py-2 px-2 font-mono-nums text-right ${(row.gains[0]?.netGain || 0) >= 0 ? 'text-gain-positive' : 'text-gain-negative'}`}>{formatCurrency(row.gains[0]?.netGain || 0)}</td>
-                  <td className="py-2 px-2 font-mono-nums text-right">{formatMultiple(row.gains[0]?.netMultipleOnOutlay || 0)}</td>
-                  <td className="py-2 px-2 text-right text-xs text-muted-foreground">{row.carryRates[0]}</td>
-                  <td className="py-2 px-2 font-mono-nums text-right">{formatCurrency(row.gains[1]?.grossValue || 0)}</td>
-                  <td className={`py-2 px-2 font-mono-nums text-right ${(row.gains[1]?.netGain || 0) >= 0 ? 'text-gain-positive' : 'text-gain-negative'}`}>{formatCurrency(row.gains[1]?.netGain || 0)}</td>
-                  <td className="py-2 px-2 font-mono-nums text-right">{formatMultiple(row.gains[1]?.netMultipleOnOutlay || 0)}</td>
-                  <td className="py-2 px-2 text-right text-xs text-muted-foreground">{row.carryRates[1]}</td>
-                  <td className={`py-2 px-2 font-mono-nums text-right font-semibold ${row.combinedNetGain >= 0 ? 'text-gain-positive' : 'text-gain-negative'}`}>{formatCurrency(row.combinedNetGain)}</td>
-                  <td className="py-2 px-2 font-mono-nums text-right font-semibold">{formatMultiple(row.combinedMultiple)}</td>
+                  {row.gains.map((g, j) => (
+                    <React.Fragment key={j}>
+                      <td className="py-2 px-2 font-mono-nums text-right">{formatCurrency(g.grossValue)}</td>
+                      <td className={`py-2 px-2 font-mono-nums text-right ${g.netGain >= 0 ? 'text-gain-positive' : 'text-gain-negative'}`}>{formatCurrency(g.netGain)}</td>
+                      <td className="py-2 px-2 font-mono-nums text-right">{formatMultiple(g.netMultipleOnOutlay)}</td>
+                      <td className="py-2 px-2 text-right text-xs text-muted-foreground">{row.carryRates[j]}</td>
+                    </React.Fragment>
+                  ))}
+                  {cycles.length > 1 && <>
+                    <td className={`py-2 px-2 font-mono-nums text-right font-semibold ${row.combinedNetGain >= 0 ? 'text-gain-positive' : 'text-gain-negative'}`}>{formatCurrency(row.combinedNetGain)}</td>
+                    <td className="py-2 px-2 font-mono-nums text-right font-semibold">{formatMultiple(row.combinedMultiple)}</td>
+                  </>}
                   <td className="py-2 px-1">
                     {row.isCustom && (
                       <button onClick={() => onCustomExitRowsChange(customExitRows.filter(v => v !== row.valuation))} className="text-muted-foreground hover:text-gain-negative transition-colors">
