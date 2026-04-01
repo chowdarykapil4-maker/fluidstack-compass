@@ -13,7 +13,7 @@ interface Props {
   onCustomExitRowsChange: (rows: number[]) => void;
 }
 
-const PRESET_VALUATIONS = [1e9, 2.5e9, 5e9, 7.5e9, 10e9, 15e9, 20e9, 30e9, 50e9];
+const PRESET_VALUATIONS = [1e9, 2.5e9, 5e9, 7.5e9, 10e9, 15e9, 20e9, 30e9, 50e9, 75e9, 100e9];
 
 export default function ExitScenarioModeler({ cycles, currentValuation, customExitRows, onCustomExitRowsChange }: Props) {
   const [newVal, setNewVal] = useState("");
