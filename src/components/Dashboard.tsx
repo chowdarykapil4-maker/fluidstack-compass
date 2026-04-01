@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
-import { CycleData, calculateGains, formatCurrency, formatValuation, formatMultiple, parseValuationInput } from "@/lib/calculations";
+import { CycleData, calculateGains, formatCurrency, formatValuation, formatMultiple, parseValuationInput, shortLabel } from "@/lib/calculations";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from "recharts";
 import { Input } from "@/components/ui/input";
 
@@ -22,15 +22,9 @@ const VALUATION_PRESETS: { value: number; label: string }[] = [
   { value: 50_000_000_000, label: "$50B" },
 ];
 
-function shortLabel(cycle: CycleData): string {
-  const num = cycle.label.match(/\d+/)?.[0] || "";
-  const round = cycle.roundName.replace(/^\$[\d.]+[MBK]?\s*/, "");
-  return `C${num} (${round})`;
-}
 
 function UnifiedCycleCard({ cycle, valuation }: { cycle: CycleData; valuation: number }) {
   const gain = calculateGains(cycle, valuation);
-  const isPositive = gain.grossGain >= 0;
   const isNetPositive = gain.netGain >= 0;
 
   return (
@@ -62,7 +56,7 @@ function UnifiedCycleCard({ cycle, valuation }: { cycle: CycleData; valuation: n
       <div className="space-y-2 text-sm">
         <Row label="Valuation Multiple" value={formatMultiple(gain.valuationMultiple)} />
         <Row label="Gross Value" value={formatCurrency(gain.grossValue)} />
-        <Row label="Gross Gain" value={formatCurrency(gain.grossGain)} highlight={isPositive} negative={!isPositive} />
+        <Row label="Gross Gain" value={formatCurrency(gain.grossGain)} highlight={gain.grossGain > 0} negative={gain.grossGain < 0} />
         {cycle.memberClass === 'A' ? (
           <>
             <Row label="Carry Tier 1 (20%, up to 6.25×)" value={`-${formatCurrency(gain.carryTier1)}`} muted />
@@ -195,7 +189,7 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
       </div>
 
       {/* Unified cycle cards */}
-      <div className={`grid grid-cols-1 ${cycleCount > 1 ? 'lg:grid-cols-2' : ''} gap-4`}>
+      <div className={`grid grid-cols-1 ${cycleCount > 1 ? 'md:grid-cols-2' : ''} gap-4`}>
         {cycles.map((cycle, i) => (
           <UnifiedCycleCard key={i} cycle={cycle} valuation={valuation} />
         ))}

@@ -1,15 +1,18 @@
 export interface CycleData {
   label: string;
   memberClass: 'A' | 'B';
-  fundEntity: string;
   investmentDate: string;
   roundName: string;
-  roundSize: number;
   entryValuation: number;
   totalOutlay: number;
   managementFee: number;
-  managementFeeBreakdown: string;
   netInvested: number;
+}
+
+export function shortLabel(cycle: CycleData): string {
+  const num = cycle.label.match(/\d+/)?.[0] || "";
+  const round = cycle.roundName.replace(/^\$[\d.]+[MBK]?\s*/, "");
+  return `C${num} (${round})`;
 }
 /** Parse shorthand valuation input: numbers < 1000 are treated as billions */
 export function parseValuationInput(raw: string): number | null {
@@ -70,14 +73,11 @@ export function buildCycles(profile: UserProfile): CycleData[] {
     cycles.push({
       label: "Cycle 1 — Series A",
       memberClass: 'A',
-      fundEntity: "TMC Fund 550 LLC",
       investmentDate: "2025-08-15",
       roundName: "$200M Series A",
-      roundSize: 200_000_000,
       entryValuation: 1_200_000_000,
       totalOutlay: profile.cycle1Committed + fee,
       managementFee: fee,
-      managementFeeBreakdown: `Fund Mgmt 1.5% (side letter) + TMC Portfolio Co 3.5% = 5% effective`,
       netInvested: profile.cycle1Committed,
     });
   }
@@ -87,22 +87,17 @@ export function buildCycles(profile: UserProfile): CycleData[] {
     cycles.push({
       label: "Cycle 2 — Series B",
       memberClass: 'B',
-      fundEntity: "TMC Fund 230 LLC",
       investmentDate: "2026-01-29",
       roundName: "$450M Series B",
-      roundSize: 450_000_000,
       entryValuation: 7_500_000_000,
       totalOutlay: profile.cycle2Committed + fee,
       managementFee: fee,
-      managementFeeBreakdown: `7.5% effective ($${fee.toFixed(0)} on $${profile.cycle2Committed.toLocaleString()} commit)`,
       netInvested: profile.cycle2Committed,
     });
   }
 
   return cycles;
 }
-
-export const DEFAULT_CYCLES: CycleData[] = buildCycles(DEFAULT_PROFILE);
 
 /**
  * Class A (Cycle 1): TWO-TIER carry.

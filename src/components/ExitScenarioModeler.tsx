@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { CycleData, calculateGains, getCarryRateLabel, formatCurrency, formatValuation, formatMultiple } from "@/lib/calculations";
+import { CycleData, calculateGains, getCarryRateLabel, formatCurrency, formatValuation, formatMultiple, shortLabel } from "@/lib/calculations";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from "recharts";
 import { Plus, Trash2 } from "lucide-react";
 
@@ -14,12 +14,6 @@ interface Props {
 }
 
 const PRESET_VALUATIONS = [1e9, 2.5e9, 5e9, 7.5e9, 10e9, 15e9, 20e9, 30e9, 50e9];
-
-function shortLabel(cycle: CycleData): string {
-  const num = cycle.label.match(/\d+/)?.[0] || "";
-  const round = cycle.roundName.replace(/^\$[\d.]+[MBK]?\s*/, "");
-  return `C${num} (${round})`;
-}
 
 export default function ExitScenarioModeler({ cycles, currentValuation, customExitRows, onCustomExitRowsChange }: Props) {
   const [newVal, setNewVal] = useState("");
