@@ -1,0 +1,20 @@
+{
+  "digests": [
+    {
+      "week": "2026-04-01",
+      "label": "Week of April 1, 2026",
+      "generatedAt": "2026-04-01T16:00:00.000Z",
+      "quiet": false,
+      "summary": "Weekly digest is now live! News will auto-update every Friday.",
+      "items": [
+        {
+          "headline": "FluidStack Compass launches weekly digest",
+          "summary": "Your investment tracker now includes a weekly news feed powered by AI, scanning for FluidStack mentions every Friday.",
+          "source": "FluidStack Compass",
+          "url": "",
+          "category": "product"
+        }
+      ]
+    }
+  ]
+}
