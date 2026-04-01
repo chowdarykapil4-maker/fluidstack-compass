@@ -37,7 +37,7 @@ export default function ExitScenarioModeler({ cycles, currentValuation, customEx
   });
 
   const chartData = tableData.map(d => {
-    const entry: Record<string, number | string> = { valuation: d.valuation, label: formatValuation(d.valuation), "Combined": d.combinedNetGain };
+    const entry: Record<string, number | string> = { valuation: d.valuation, label: formatValuation(d.valuation) };
     cycles.forEach((c, i) => { entry[shortLabel(c)] = d.gains[i]?.netGain || 0; });
     return entry;
   });
@@ -207,9 +207,8 @@ export default function ExitScenarioModeler({ cycles, currentValuation, customEx
               formatter={(value: number) => '$' + Math.round(value).toLocaleString()}
               labelFormatter={(label) => `Exit: ${label}`}
             />
-            <Legend wrapperStyle={{ fontSize: 11 }} />
+            {cycles.length > 1 && <Legend wrapperStyle={{ fontSize: 11 }} />}
             <ReferenceLine x={formatValuation(currentValuation)} stroke="hsl(152, 68%, 45%)" strokeDasharray="5 5" label={{ value: "Current", fill: "hsl(152, 68%, 45%)", fontSize: 11 }} />
-            {cycles.length > 1 && <Line type="monotone" dataKey="Combined" stroke="hsl(150, 10%, 92%)" strokeWidth={2.5} dot={{ r: 2 }} />}
             {cycles.map((c, i) => (
               <Line key={c.label} type="monotone" dataKey={shortLabel(c)} stroke={i === 0 ? "hsl(152, 68%, 45%)" : "hsl(152, 40%, 25%)"} strokeWidth={2} strokeDasharray={i > 0 ? "6 3" : undefined} dot={{ r: 2 }} />
             ))}

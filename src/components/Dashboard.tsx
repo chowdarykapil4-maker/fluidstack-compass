@@ -115,8 +115,7 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
 
   const chartData = VALUATION_POINTS.map(v => {
     const g = cycles.map(c => calculateGains(c, v));
-    const combined = g.reduce((s, x) => s + x.netGain, 0);
-    const entry: Record<string, number | string> = { valuation: v, label: formatValuation(v), Combined: combined };
+    const entry: Record<string, number | string> = { valuation: v, label: formatValuation(v) };
     cycles.forEach((c, i) => { entry[shortLabel(c)] = g[i]?.netGain || 0; });
     return entry;
   });
@@ -221,9 +220,8 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
               labelStyle={{ fontSize: 11 }}
               formatter={(value: number) => '$' + Math.round(value).toLocaleString()}
             />
-            <Legend wrapperStyle={{ fontSize: 11 }} />
+            {cycleCount > 1 && <Legend wrapperStyle={{ fontSize: 11 }} />}
             <ReferenceLine x={selectedLabel} stroke="hsl(152, 68%, 45%)" strokeDasharray="4 4" label={{ value: "Selected", fill: "hsl(152, 68%, 45%)", fontSize: 11, position: "top" }} />
-            {cycleCount > 1 && <Line type="monotone" dataKey="Combined" stroke="hsl(150, 10%, 92%)" strokeWidth={2.5} dot={{ r: 2 }} />}
             {cycles.map((c, i) => (
               <Line key={c.label} type="monotone" dataKey={shortLabel(c)} stroke={i === 0 ? "hsl(152, 68%, 45%)" : "hsl(152, 40%, 35%)"} strokeWidth={2} strokeDasharray={i > 0 ? "6 3" : undefined} dot={{ r: 2 }} />
             ))}
