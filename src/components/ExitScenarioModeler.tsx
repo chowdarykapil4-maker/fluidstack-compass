@@ -144,9 +144,10 @@ export default function ExitScenarioModeler({ cycles, currentValuation, customEx
             />
             <Legend />
             <ReferenceLine x={formatValuation(currentValuation)} stroke="hsl(152, 68%, 45%)" strokeDasharray="5 5" label={{ value: "Current", fill: "hsl(152, 68%, 45%)", fontSize: 11 }} />
-            <Line type="monotone" dataKey="Cycle 1 Net Gain" stroke="hsl(152, 68%, 45%)" strokeWidth={2} dot={{ r: 3 }} />
-            <Line type="monotone" dataKey="Cycle 2 Net Gain" stroke="hsl(152, 40%, 25%)" strokeWidth={2} dot={{ r: 3 }} />
-            <Line type="monotone" dataKey="Combined Net Gain" stroke="hsl(150, 10%, 92%)" strokeWidth={2.5} dot={{ r: 3 }} />
+            {cycles.length > 1 && <Line type="monotone" dataKey="Combined Net Gain" stroke="hsl(150, 10%, 92%)" strokeWidth={2.5} dot={{ r: 3 }} />}
+            {cycles.map((c, i) => (
+              <Line key={c.label} type="monotone" dataKey={`${c.label} Net Gain`} stroke={i === 0 ? "hsl(152, 68%, 45%)" : "hsl(152, 40%, 25%)"} strokeWidth={2} strokeDasharray={i > 0 ? "6 3" : undefined} dot={{ r: 3 }} />
+            ))}
           </LineChart>
         </ResponsiveContainer>
       </Card>
