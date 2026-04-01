@@ -29,7 +29,7 @@ interface Props {
   onValuationChange: (val: number) => void;
 }
 
-const VALUATION_POINTS = [1e9, 2.5e9, 5e9, 7.5e9, 10e9, 15e9, 20e9, 30e9, 50e9, 75e9, 100e9];
+const VALUATION_POINTS = [1e9, 2.5e9, 5e9, 7.5e9, 10e9, 15e9, 20e9, 30e9, 50e9, 75e9, 100e9, 150e9, 200e9];
 
 const VALUATION_PRESETS: { value: number; label: string }[] = [
   { value: 7_500_000_000, label: "$7.5B" },
