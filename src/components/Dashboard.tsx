@@ -81,15 +81,10 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
 
   const chartData = VALUATION_POINTS.map(v => {
     const g = cycles.map(c => calculateGains(c, v));
-    const c1Net = g[0]?.netGain || 0;
-    const c2Net = g[1]?.netGain || 0;
-    return {
-      valuation: v,
-      label: formatValuation(v),
-      "Cycle 1 (Class A)": c1Net,
-      "Cycle 2 (Class B)": c2Net,
-      "Combined": c1Net + c2Net,
-    };
+    const combined = g.reduce((s, x) => s + x.netGain, 0);
+    const entry: Record<string, number | string> = { valuation: v, label: formatValuation(v), Combined: combined };
+    cycles.forEach((c, i) => { entry[c.label] = g[i]?.netGain || 0; });
+    return entry;
   });
   const selectedLabel = formatValuation(valuation);
 
