@@ -34,28 +34,26 @@ function CategoryPill({ category }: { category: string }) {
 
 function DigestItemRow({ item }: { item: DigestItem }) {
   return (
-    <div className="border-t border-border pt-2.5 space-y-1">
-      <div className="flex items-center gap-2">
-        <CategoryPill category={item.category} />
-        {item.url ? (
-          <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-sm text-foreground hover:underline">
-            {item.headline}
-          </a>
-        ) : (
-          <span className="text-sm text-foreground">{item.headline}</span>
-        )}
-      </div>
-      <p className="text-xs text-muted-foreground">{item.summary}</p>
-      <p className="text-[11px] text-muted-foreground/50 flex items-center gap-1">
+    <div className="border-t border-border pt-1.5 flex items-center gap-2 flex-wrap">
+      <CategoryPill category={item.category} />
+      {item.url ? (
+        <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-xs text-foreground hover:underline truncate">
+          {item.headline}
+        </a>
+      ) : (
+        <span className="text-xs text-foreground truncate">{item.headline}</span>
+      )}
+      <span className="text-[10px] text-muted-foreground/50 flex items-center gap-0.5 ml-auto shrink-0">
         {item.source}
-        {item.url && <ExternalLink className="inline" size={10} />}
-      </p>
+        {item.url && <ExternalLink className="inline" size={9} />}
+      </span>
     </div>
   );
 }
 
 export default function MonthlyDigest() {
   const [digests, setDigests] = useState<Digest[] | null>(null);
+  const [expanded, setExpanded] = useState(false);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -71,9 +69,11 @@ export default function MonthlyDigest() {
 
   const latest = digests[0];
   const older = digests.slice(1);
+  const visibleItems = expanded ? latest.items : latest.items.slice(0, 3);
+  const hasToggle = latest.items.length > 3;
 
   return (
-    <Card className="bg-card border-border rounded-lg p-3 sm:p-4 space-y-2.5">
+    <Card className="bg-card border-border rounded-lg p-3 sm:p-4 space-y-1.5">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Newspaper size={14} className="text-primary" />
@@ -87,7 +87,17 @@ export default function MonthlyDigest() {
           Quiet month — no major FluidStack news.
         </p>
       ) : (
-        latest.items.map((item, i) => <DigestItemRow key={i} item={item} />)
+        <>
+          {visibleItems.map((item, i) => <DigestItemRow key={i} item={item} />)}
+          {hasToggle && (
+            <button
+              onClick={() => setExpanded(!expanded)}
+              className="text-xs text-primary hover:underline pt-1"
+            >
+              {expanded ? "Show less" : `Show all ${latest.items.length} items`}
+            </button>
+          )}
+        </>
       )}
 
       {older.length > 0 && (
@@ -96,20 +106,9 @@ export default function MonthlyDigest() {
             <ChevronDown size={12} className={`transition-transform ${open ? "rotate-180" : ""}`} />
             Previous months
           </CollapsibleTrigger>
-          <CollapsibleContent className="space-y-1.5 pt-2">
+          <CollapsibleContent className="space-y-0 pt-1">
             {older.map((d) =>
-              d.items.map((item, j) => (
-                <div key={`${d.week}-${j}`} className="flex items-center gap-2 border-t border-border pt-1.5">
-                  <CategoryPill category={item.category} />
-                  {item.url ? (
-                    <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-xs text-foreground hover:underline">
-                      {item.headline}
-                    </a>
-                  ) : (
-                    <span className="text-xs text-foreground">{item.headline}</span>
-                  )}
-                </div>
-              ))
+              d.items.map((item, j) => <DigestItemRow key={`${d.week}-${j}`} item={item} />)
             )}
           </CollapsibleContent>
         </Collapsible>
