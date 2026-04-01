@@ -7,7 +7,6 @@ interface Props {
   cycles: CycleData[];
   gains: GainResult[];
   currentValuation: number;
-  lastUpdated: Date;
 }
 
 const CLASS_DESCRIPTIONS: Record<string, string> = {
