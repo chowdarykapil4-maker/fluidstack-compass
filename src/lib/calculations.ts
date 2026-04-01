@@ -131,8 +131,7 @@ export function getCarryRateLabel(cycle: CycleData, valuation: number, carry: Ca
     return "22.5% (marginal)";
   } else {
     if (multiple <= 1) return "0%";
-    if (multiple <= carry.tier1Threshold) return "20%";
-    return "20%/22.5% blended";
+    return "22.5%";
   }
 }
 

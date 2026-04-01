@@ -36,10 +36,11 @@ function GainCard({ cycle, valuation }: { cycle: CycleData; valuation: number })
             muted
           />
         ) : (
-          <>
-            <Row label="Carry Tier 1 (20%)" value={`-${formatCurrency(gain.carryTier1)}`} muted />
-            <Row label="Carry Tier 2 (22.5%)" value={`-${formatCurrency(gain.carryTier2)}`} muted />
-          </>
+          <Row
+            label={gain.grossGain <= 0 ? "Carry: $0 (no gain)" : "Carry (22.5% on gains)"}
+            value={`-${formatCurrency(gain.totalCarry)}`}
+            muted
+          />
         )}
         <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
           <span className="text-secondary-foreground text-sm font-semibold">Net Gain to LP</span>
