@@ -73,9 +73,18 @@ export default function Index() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-sm font-mono-nums text-primary font-semibold bg-primary/10 px-3 py-1.5 rounded-md border border-primary/20">
-              Mark: {formatValuation(state.currentValuation)}
-            </span>
+            {cycles.length > 0 && (() => {
+              const totalOutlay = cycles.reduce((s, c) => s + c.totalOutlay, 0);
+              const combinedNetGain = gains.reduce((s, g) => s + g.netGain, 0);
+              const combinedNetPosition = gains.reduce((s, g) => s + g.grossValue - g.totalCarry, 0);
+              const blendedMultiple = combinedNetPosition / totalOutlay;
+              const isPositive = combinedNetGain >= 0;
+              return (
+                <span className={`text-sm font-mono-nums font-semibold px-3 py-1.5 rounded-md border ${isPositive ? 'text-gain-positive bg-gain-positive/10 border-gain-positive/20' : 'text-gain-negative bg-gain-negative/10 border-gain-negative/20'}`}>
+                  {isPositive ? '+' : ''}{formatCurrency(combinedNetGain)} · {formatMultiple(blendedMultiple)}
+                </span>
+              );
+            })()}
             <button
               onClick={() => setSettingsOpen(true)}
               className="w-9 h-9 flex items-center justify-center rounded-md border border-border text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
@@ -98,31 +107,24 @@ export default function Index() {
       {/* Quick Stats Banner */}
       {cycles.length > 0 && (() => {
         const totalOutlay = cycles.reduce((s, c) => s + c.totalOutlay, 0);
-        const totalNetInvested = cycles.reduce((s, c) => s + c.netInvested, 0);
-        const combinedGrossValue = gains.reduce((s, g) => s + g.grossValue, 0);
-        const totalCarry = gains.reduce((s, g) => s + g.totalCarry, 0);
-        const combinedNetGain = combinedGrossValue - totalNetInvested - totalCarry;
-        const combinedNetPosition = gains.reduce((s, g) => s + g.grossValue - g.totalCarry, 0);
-        const blendedMultiple = combinedNetPosition / totalOutlay;
         const holdingMonths = (investmentDate: string) =>
           Math.round((Date.now() - new Date(investmentDate).getTime()) / (1000 * 60 * 60 * 24 * 30.44));
         const Divider = () => <span className="border-r border-border/50 h-4" />;
 
-        const holdingText = cycles.map((c, i) => {
-          const mo = holdingMonths(c.investmentDate);
-          return `C${i + 1}: ${mo} mo`;
-        }).join(" · ");
-
         return (
           <div className="py-2 px-4 bg-secondary/50 border-b border-border">
             <div className="container max-w-7xl mx-auto flex items-center justify-center gap-6 text-xs">
-              <span className="text-muted-foreground">Gross Value: <span className={`font-mono-nums ${combinedGrossValue >= totalNetInvested ? 'text-gain-positive' : 'text-gain-negative'}`}>{formatCurrency(combinedGrossValue)}</span></span>
+              <span className="text-muted-foreground"><span className="font-mono-nums text-foreground">${Math.round(totalOutlay).toLocaleString()}</span> deployed</span>
               <Divider />
-              <span className="text-muted-foreground">Net Gain: <span className={`font-mono-nums ${combinedNetGain >= 0 ? 'text-gain-positive' : 'text-gain-negative'}`}>{formatCurrency(combinedNetGain)}</span></span>
-              <Divider />
-              <span className="text-muted-foreground">Net Multiple: <span className={`font-mono-nums ${blendedMultiple >= 1 ? 'text-gain-positive' : 'text-gain-negative'}`}>{formatMultiple(blendedMultiple)}</span></span>
-              <Divider />
-              <span className="text-muted-foreground"><span className="font-mono-nums text-foreground">{holdingText}</span></span>
+              {cycles.map((c, i) => {
+                const mo = holdingMonths(c.investmentDate);
+                return (
+                  <span key={i}>
+                    {i > 0 && <Divider />}
+                    <span className="text-muted-foreground">C{i + 1}: <span className="font-mono-nums text-foreground">{mo} mo</span></span>
+                  </span>
+                );
+              })}
             </div>
           </div>
         );
