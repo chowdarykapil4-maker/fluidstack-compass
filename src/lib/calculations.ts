@@ -1,15 +1,18 @@
 export interface CycleData {
   label: string;
   memberClass: 'A' | 'B';
-  fundEntity: string;
   investmentDate: string;
   roundName: string;
-  roundSize: number;
   entryValuation: number;
   totalOutlay: number;
   managementFee: number;
-  managementFeeBreakdown: string;
   netInvested: number;
+}
+
+export function shortLabel(cycle: CycleData): string {
+  const num = cycle.label.match(/\d+/)?.[0] || "";
+  const round = cycle.roundName.replace(/^\$[\d.]+[MBK]?\s*/, "");
+  return `C${num} (${round})`;
 }
 /** Parse shorthand valuation input: numbers < 1000 are treated as billions */
 export function parseValuationInput(raw: string): number | null {
