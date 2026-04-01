@@ -142,7 +142,7 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
       <div className="bg-primary/[0.03] border border-primary/15 rounded-lg px-3 py-2 sm:px-4 sm:py-3 space-y-1 sm:space-y-2">
         <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-4">
           <div className="shrink-0 text-center sm:text-left">
-            <p className="text-base sm:text-xl font-semibold font-mono-nums text-primary">{formatValuation(valuation)}</p>
+            <p className="text-base sm:text-xl font-semibold font-mono-nums text-primary"><span className="text-[11px] font-normal uppercase tracking-wider text-muted-foreground mr-1.5">Valuation</span>{formatValuation(valuation)}</p>
           </div>
           <div className="w-full sm:w-auto flex-1 flex items-center gap-2 min-h-[44px] sm:min-h-0">
             <span className="text-[11px] text-muted-foreground shrink-0">$500M</span>
