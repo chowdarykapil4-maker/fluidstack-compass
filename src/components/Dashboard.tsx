@@ -142,12 +142,12 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
 
   return (
     <div className="space-y-4">
-      {/* Valuation Control Strip */}
-      <div className="bg-primary/[0.03] border border-primary/15 rounded-lg px-4 py-3">
+      {/* Valuation Control Strip + Preset Pills */}
+      <div className="bg-primary/[0.03] border border-primary/15 rounded-lg px-3 py-2.5 sm:px-4 sm:py-3 space-y-2">
         <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-4">
           <div className="shrink-0 text-center sm:text-left">
             <p className="text-[11px] uppercase tracking-wider text-muted-foreground">Valuation</p>
-            <p className="text-xl font-semibold font-mono-nums text-primary">{formatValuation(valuation)}</p>
+            <p className="text-lg sm:text-xl font-semibold font-mono-nums text-primary">{formatValuation(valuation)}</p>
           </div>
           <div className="w-full sm:w-auto flex-1 flex items-center gap-2 min-h-[44px] sm:min-h-0">
             <span className="text-[11px] text-muted-foreground shrink-0">$500M</span>
@@ -170,27 +170,24 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
             className="hidden sm:block font-mono-nums bg-secondary border-border text-xs h-8 w-20 text-center shrink-0"
           />
         </div>
-      </div>
-
-      {/* Preset pills */}
-      <div className="flex gap-1.5 flex-wrap">
-        {VALUATION_PRESETS.map(p => {
-          const isActive = valuation === p.value;
-          return (
-            <button
-              key={p.value}
-              onClick={() => setValuation(p.value)}
-              className={`font-mono-nums text-xs rounded-md border px-2.5 py-1.5 transition-colors ${
-                isActive
-                  ? 'bg-primary/10 border-primary/30 text-primary'
-                  : 'bg-secondary/30 border-border text-muted-foreground hover:bg-secondary/50 hover:text-foreground'
-              }`}
-            >
-              {p.label}
-              {p.sub && <span className="block text-[10px] leading-tight opacity-70">{p.sub}</span>}
-            </button>
-          );
-        })}
+        <div className="flex flex-nowrap gap-1.5">
+          {VALUATION_PRESETS.map(p => {
+            const isActive = valuation === p.value;
+            return (
+              <button
+                key={p.value}
+                onClick={() => setValuation(p.value)}
+                className={`flex-1 font-mono-nums text-xs rounded-md border px-2 py-1 transition-colors ${
+                  isActive
+                    ? 'bg-primary/10 border-primary/30 text-primary'
+                    : 'bg-secondary/30 border-border text-muted-foreground hover:bg-secondary/50 hover:text-foreground'
+                }`}
+              >
+                {p.label}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Contextual divider with portfolio summary */}
