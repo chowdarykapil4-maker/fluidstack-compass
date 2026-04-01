@@ -215,8 +215,11 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
             <XAxis dataKey="label" tick={{ fill: 'hsl(150 5% 55%)', fontSize: 11 }} interval="preserveStartEnd" />
             <YAxis tick={{ fill: 'hsl(150 5% 55%)', fontSize: 12 }} tickFormatter={(v) => v >= 1000 ? `$${(v / 1000).toFixed(0)}k` : `$${v.toFixed(0)}`} />
             <Tooltip
+              wrapperStyle={{ maxWidth: '180px' }}
               contentStyle={{ background: 'hsl(160 12% 9%)', border: '1px solid hsl(160 10% 16%)', borderRadius: 8, color: 'hsl(150 10% 92%)' }}
-              formatter={(value: number) => formatCurrency(value)}
+              itemStyle={{ fontSize: 11 }}
+              labelStyle={{ fontSize: 11 }}
+              formatter={(value: number) => '$' + Math.round(value).toLocaleString()}
             />
             <Legend wrapperStyle={{ fontSize: 11 }} />
             <ReferenceLine x={selectedLabel} stroke="hsl(152, 68%, 45%)" strokeDasharray="4 4" label={{ value: "Selected", fill: "hsl(152, 68%, 45%)", fontSize: 11, position: "top" }} />
