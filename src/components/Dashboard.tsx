@@ -237,7 +237,7 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
           <LineChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(160 10% 16%)" />
             <XAxis dataKey="label" tick={{ fill: "hsl(150 5% 55%)", fontSize: 11 }} interval="preserveStartEnd" />
-            <YAxis tick={{ fill: "hsl(150 5% 55%)", fontSize: 12 }} tickFormatter={(v) => (v >= 1000 ? `$${(v / 1000).toFixed(0)}k` : `$${v.toFixed(0)}`)} />
+            <YAxis tick={{ fill: "hsl(150 5% 55%)", fontSize: 12 }} tickFormatter={(v) => { const abs = Math.abs(v); const formatted = abs >= 1000 ? '$' + (abs / 1000).toFixed(0) + 'k' : '$' + abs.toFixed(0); return v < 0 ? '-' + formatted : formatted; }} />
             <Tooltip
               wrapperStyle={{ maxWidth: "180px" }}
               contentStyle={{ background: "hsl(160 12% 9%)", border: "1px solid hsl(160 10% 16%)", borderRadius: 8, color: "hsl(150 10% 92%)" }}
