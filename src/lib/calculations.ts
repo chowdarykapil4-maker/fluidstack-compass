@@ -73,11 +73,11 @@ export const DEFAULT_CYCLES: CycleData[] = [
 ];
 
 /**
- * Class A (Cycle 1): 6.25× preferred return, NO carry below threshold.
- *   - ≤ 6.25×: carry = $0
- *   - > 6.25×: 22.5% on incremental gain above 6.25×
+ * Class A (Cycle 1): TWO-TIER carry.
+ *   - 20% on gains from 1× to 6.25×
+ *   - 22.5% on gains above 6.25×
  *
- * Class B (Cycle 2): Return of capital (1×) first, then flat 22.5% carry on ALL gains.
+ * Class B (Cycle 2): FLAT 22.5% carry on ALL gains above 1×.
  *   - ≤ 1×: carry = $0
  *   - > 1×: 22.5% on all gains
  */
@@ -94,14 +94,23 @@ export function calculateGains(
   let carryTier2 = 0;
 
   if (cycle.memberClass === 'A') {
-    // Class A: NO carry below 6.25×. Only 22.5% on gain above 6.25×.
-    if (valuationMultiple > carry.tier1Threshold) {
-      const gainAboveThreshold = grossValue - (cycle.netInvested * carry.tier1Threshold);
-      carryTier2 = gainAboveThreshold * carry.tier2Rate;
+    // Class A: TWO-TIER carry
+    // 20% on gains from 1× to 6.25×
+    // 22.5% on gains above 6.25×
+    if (grossGain > 0) {
+      if (valuationMultiple <= carry.tier1Threshold) {
+        // Below 6.25×: all gains get 20%
+        carryTier1 = grossGain * carry.tier1Rate;
+      } else {
+        // Above 6.25×: split into two tiers
+        const gainUpToThreshold = cycle.netInvested * (carry.tier1Threshold - 1);
+        carryTier1 = gainUpToThreshold * carry.tier1Rate;
+        const gainAboveThreshold = grossGain - gainUpToThreshold;
+        carryTier2 = gainAboveThreshold * carry.tier2Rate;
+      }
     }
-    // carryTier1 stays 0 for Class A
   } else {
-    // Class B: flat 22.5% carry on ALL gains above 1× (return of capital)
+    // Class B: FLAT 22.5% on ALL gains above 1× (return of capital)
     if (grossGain > 0) {
       carryTier2 = grossGain * carry.tier2Rate;
       // carryTier1 stays 0 — no 20% tier for Class B
@@ -127,8 +136,9 @@ export function calculateGains(
 export function getCarryRateLabel(cycle: CycleData, valuation: number, carry: CarryStructure = DEFAULT_CARRY): string {
   const multiple = valuation / cycle.entryValuation;
   if (cycle.memberClass === 'A') {
-    if (multiple <= carry.tier1Threshold) return "0%";
-    return "22.5% (marginal)";
+    if (multiple <= 1) return "0%";
+    if (multiple <= carry.tier1Threshold) return "20%";
+    return "20%/22.5% blended";
   } else {
     if (multiple <= 1) return "0%";
     return "22.5%";
