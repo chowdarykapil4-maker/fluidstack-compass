@@ -9,6 +9,15 @@ interface Props {
   cycles: CycleData[];
 }
 
+interface WaterfallRow {
+  label: string;
+  fmt: string;
+  muted?: boolean;
+  bold?: boolean;
+  highlight?: boolean;
+  negative?: boolean;
+}
+
 function WaterfallCard({ cycle, valuation }: { cycle: CycleData; valuation: number }) {
   const gain = calculateGains(cycle, valuation);
   const isPositive = gain.grossGain >= 0;
