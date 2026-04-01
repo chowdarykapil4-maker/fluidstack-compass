@@ -115,8 +115,7 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
 
   const chartData = VALUATION_POINTS.map(v => {
     const g = cycles.map(c => calculateGains(c, v));
-    const combined = g.reduce((s, x) => s + x.netGain, 0);
-    const entry: Record<string, number | string> = { valuation: v, label: formatValuation(v), Combined: combined };
+    const entry: Record<string, number | string> = { valuation: v, label: formatValuation(v) };
     cycles.forEach((c, i) => { entry[shortLabel(c)] = g[i]?.netGain || 0; });
     return entry;
   });
