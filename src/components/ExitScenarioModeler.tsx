@@ -200,8 +200,11 @@ export default function ExitScenarioModeler({ cycles, currentValuation, customEx
             <XAxis dataKey="label" tick={{ fill: 'hsl(150 5% 55%)', fontSize: 11 }} angle={-30} textAnchor="end" height={60} />
             <YAxis tick={{ fill: 'hsl(150 5% 55%)', fontSize: 11 }} tickFormatter={(v) => v >= 1000 ? `$${(v / 1000).toFixed(0)}k` : `$${v}`} />
             <Tooltip
+              wrapperStyle={{ maxWidth: '180px' }}
               contentStyle={{ background: 'hsl(160 12% 9%)', border: '1px solid hsl(160 10% 16%)', borderRadius: 8, color: 'hsl(150 10% 92%)' }}
-              formatter={(value: number) => formatCurrency(value)}
+              itemStyle={{ fontSize: 11 }}
+              labelStyle={{ fontSize: 11 }}
+              formatter={(value: number) => '$' + Math.round(value).toLocaleString()}
               labelFormatter={(label) => `Exit: ${label}`}
             />
             <Legend wrapperStyle={{ fontSize: 11 }} />
