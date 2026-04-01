@@ -77,10 +77,9 @@ export const DEFAULT_CYCLES: CycleData[] = [
  *   - ≤ 6.25×: carry = $0
  *   - > 6.25×: 22.5% on incremental gain above 6.25×
  *
- * Class B (Cycle 2): Return of capital (1×) first, then carry on all gains.
+ * Class B (Cycle 2): Return of capital (1×) first, then flat 22.5% carry on ALL gains.
  *   - ≤ 1×: carry = $0
- *   - 1× to 6.25×: 20% on gains
- *   - > 6.25×: 20% on gains from 1×–6.25×, 22.5% on gains above 6.25×
+ *   - > 1×: 22.5% on all gains
  */
 export function calculateGains(
   cycle: CycleData,
@@ -102,16 +101,10 @@ export function calculateGains(
     }
     // carryTier1 stays 0 for Class A
   } else {
-    // Class B: 20% carry from 1× to 6.25×, 22.5% above 6.25×
+    // Class B: flat 22.5% carry on ALL gains above 1× (return of capital)
     if (grossGain > 0) {
-      if (valuationMultiple <= carry.tier1Threshold) {
-        carryTier1 = grossGain * carry.tier1Rate;
-      } else {
-        const gainUpToThreshold = cycle.netInvested * (carry.tier1Threshold - 1);
-        carryTier1 = gainUpToThreshold * carry.tier1Rate;
-        const gainAboveThreshold = grossGain - gainUpToThreshold;
-        carryTier2 = gainAboveThreshold * carry.tier2Rate;
-      }
+      carryTier2 = grossGain * carry.tier2Rate;
+      // carryTier1 stays 0 — no 20% tier for Class B
     }
   }
 
@@ -138,8 +131,7 @@ export function getCarryRateLabel(cycle: CycleData, valuation: number, carry: Ca
     return "22.5% (marginal)";
   } else {
     if (multiple <= 1) return "0%";
-    if (multiple <= carry.tier1Threshold) return "20%";
-    return "20%/22.5% blended";
+    return "22.5%";
   }
 }
 
