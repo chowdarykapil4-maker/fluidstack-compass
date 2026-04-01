@@ -121,7 +121,7 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
         >
           <span className="text-muted-foreground">
             <span className="text-foreground font-medium">Investment Details</span>
-            <span className="ml-3 text-xs">2 positions · ${Math.round(totalOutlay).toLocaleString()} deployed · Class A + B</span>
+            <span className="ml-3 text-xs">{cycleCount} position{cycleCount !== 1 ? 's' : ''} · ${Math.round(totalOutlay).toLocaleString()} deployed · {cycles.map(c => `Class ${c.memberClass}`).join(' + ')}</span>
           </span>
           {detailsOpen ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
         </button>
