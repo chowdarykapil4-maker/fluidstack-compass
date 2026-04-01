@@ -73,12 +73,11 @@ export default function Index() {
             </div>
           </div>
           <button
-              onClick={() => setSettingsOpen(true)}
-              className="w-9 h-9 flex items-center justify-center rounded-md border border-border text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
-            >
-              <Settings className="w-4 h-4" />
-            </button>
-          </div>
+            onClick={() => setSettingsOpen(true)}
+            className="w-9 h-9 flex items-center justify-center rounded-md border border-border text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+          >
+            <Settings className="w-4 h-4" />
+          </button>
         </div>
       </header>
 
