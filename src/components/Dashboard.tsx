@@ -42,16 +42,13 @@ function UnifiedCycleCard({ cycle, valuation }: { cycle: CycleData; valuation: n
           <span className="text-xs text-muted-foreground">Class {cycle.memberClass}</span>
         </div>
         <p className="text-xs text-muted-foreground">
-          {new Date(cycle.investmentDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} · {cycle.roundName}
+          {new Date(cycle.investmentDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+          {' · '}Entry at <span className="font-mono-nums text-foreground">{formatValuation(cycle.entryValuation)}</span>
         </p>
         <p className="text-xs text-muted-foreground">
-          Entry: <span className="font-mono-nums text-foreground">{formatValuation(cycle.entryValuation)}</span>
-          {' · '}Round: <span className="font-mono-nums text-foreground">{cycle.roundName}</span>
-        </p>
-        <p className="text-xs text-muted-foreground">
-          Outlay: <span className="font-mono-nums text-foreground">{formatCurrency(cycle.totalOutlay)}</span>
-          {' · '}Fee: <span className="font-mono-nums text-foreground">{formatCurrency(cycle.managementFee)}</span>
-          {' · '}Net: <span className="font-mono-nums text-foreground">{formatCurrency(cycle.netInvested)}</span>
+          <span className="font-mono-nums text-foreground">{formatCurrency(cycle.netInvested)}</span> invested
+          {' · '}<span className="font-mono-nums text-foreground">{formatCurrency(cycle.managementFee)}</span> fee
+          {' · '}<span className="font-mono-nums text-foreground">{formatCurrency(cycle.totalOutlay)}</span> total outlay
         </p>
         <p className="text-primary text-xs italic">
           {cycle.memberClass === 'A' ? '20% carry up to 6.25×, then 22.5% above' : 'Carry from 1× on all gains (22.5%)'}
