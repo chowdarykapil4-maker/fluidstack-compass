@@ -145,12 +145,12 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
     <div className="space-y-4">
       {/* Valuation Control Strip */}
       <div className="bg-primary/[0.03] border border-primary/15 rounded-lg px-4 py-3">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
-          <div className="shrink-0">
+        <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-4">
+          <div className="shrink-0 text-center sm:text-left">
             <p className="text-[11px] uppercase tracking-wider text-muted-foreground">Valuation</p>
             <p className="text-xl font-semibold font-mono-nums text-primary">{formatValuation(valuation)}</p>
           </div>
-          <div className="flex-1 flex items-center gap-2 min-h-[44px] sm:min-h-0">
+          <div className="w-full sm:w-auto flex-1 flex items-center gap-2 min-h-[44px] sm:min-h-0">
             <span className="text-[11px] text-muted-foreground shrink-0">$500M</span>
             <Slider
               value={[valuation]}
@@ -168,7 +168,7 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
             placeholder="e.g. 12"
-            className="font-mono-nums bg-secondary border-border text-xs h-8 w-20 text-center shrink-0 self-end sm:self-auto"
+            className="hidden sm:block font-mono-nums bg-secondary border-border text-xs h-8 w-20 text-center shrink-0"
           />
         </div>
       </div>
