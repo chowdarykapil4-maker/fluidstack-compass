@@ -223,9 +223,6 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
             <Area type="monotone" dataKey="Cycle 1" stackId="1" fill="hsl(152, 68%, 45%)" fillOpacity={0.3} stroke="hsl(152, 68%, 45%)" />
             <Area type="monotone" dataKey="Cycle 2" stackId="1" fill="hsl(152, 40%, 25%)" fillOpacity={0.3} stroke="hsl(152, 40%, 35%)" />
             <ReferenceLine x={selectedLabel} stroke="hsl(152, 68%, 45%)" strokeDasharray="4 4" label={{ value: "Selected", fill: "hsl(152, 68%, 45%)", fontSize: 11, position: "top" }} />
-            {valuation !== currentValuation && (
-              <ReferenceLine x={currentMarkLabel} stroke="hsl(150 5% 55%)" strokeDasharray="4 4" label={{ value: "Current", fill: "hsl(150 5% 55%)", fontSize: 11, position: "top" }} />
-            )}
           </AreaChart>
         </ResponsiveContainer>
       </Card>
