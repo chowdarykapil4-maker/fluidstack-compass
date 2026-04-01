@@ -6,6 +6,15 @@ import { CycleData, calculateGains, getCarryRateLabel, formatCurrency, formatVal
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from "recharts";
 import { Plus, Trash2 } from "lucide-react";
 
+interface Props {
+  cycles: CycleData[];
+  currentValuation: number;
+  customExitRows: number[];
+  onCustomExitRowsChange: (rows: number[]) => void;
+}
+
+const PRESET_VALUATIONS = [1e9, 2.5e9, 5e9, 7.5e9, 10e9, 15e9, 20e9, 30e9, 50e9];
+
 export default function ExitScenarioModeler({ cycles, currentValuation, customExitRows, onCustomExitRowsChange }: Props) {
   const [newVal, setNewVal] = useState("");
 
