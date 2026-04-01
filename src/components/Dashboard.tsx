@@ -156,7 +156,7 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
   const handleInputBlur = () => {
     setInputFocused(false);
     const parsed = parseValuationInput(inputText);
-    if (parsed && parsed >= 500_000_000 && parsed <= 50_000_000_000) setValuation(parsed);
+    if (parsed && parsed >= 500_000_000 && parsed <= 200_000_000_000) setValuation(parsed);
   };
 
   const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
