@@ -91,9 +91,11 @@ export default function Index() {
         isFirstTime={!state.hasCompletedSetup}
       />
 
-      {/* Quick Stats Banner */}
       {cycles.length > 0 && (() => {
         const totalOutlay = cycles.reduce((s, c) => s + c.totalOutlay, 0);
+        const combinedNetGain = gains.reduce((s, g) => s + g.netGain, 0);
+        const combinedNetPosition = gains.reduce((s, g) => s + g.grossValue - g.totalCarry, 0);
+        const blendedMultiple = combinedNetPosition / totalOutlay;
         const holdingMonths = (investmentDate: string) =>
           Math.round((Date.now() - new Date(investmentDate).getTime()) / (1000 * 60 * 60 * 24 * 30.44));
         const Divider = () => <span className="border-r border-border/50 h-4" />;
@@ -103,10 +105,14 @@ export default function Index() {
             <div className="container max-w-7xl mx-auto flex items-center justify-center gap-6 text-xs">
               <span className="text-muted-foreground"><span className="font-mono-nums text-foreground">${Math.round(totalOutlay).toLocaleString()}</span> deployed</span>
               <Divider />
+              <span className="text-muted-foreground">Net Gain: <span className={`font-mono-nums ${combinedNetGain >= 0 ? 'text-gain-positive' : 'text-gain-negative'}`}>{combinedNetGain >= 0 ? '+' : ''}{formatCurrency(combinedNetGain)}</span></span>
+              <Divider />
+              <span className="text-muted-foreground">Net Multiple: <span className={`font-mono-nums ${blendedMultiple >= 1 ? 'text-gain-positive' : 'text-gain-negative'}`}>{formatMultiple(blendedMultiple)}</span></span>
+              <Divider />
               {cycles.map((c, i) => {
                 const mo = holdingMonths(c.investmentDate);
                 return (
-                  <span key={i}>
+                  <span key={i} className="flex items-center gap-6">
                     {i > 0 && <Divider />}
                     <span className="text-muted-foreground">C{i + 1}: <span className="font-mono-nums text-foreground">{mo} mo</span></span>
                   </span>
