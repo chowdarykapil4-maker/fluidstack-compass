@@ -76,7 +76,7 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
 
   const gains = cycles.map(c => calculateGains(c, valuation));
   const totalOutlay = cycles.reduce((s, c) => s + c.totalOutlay, 0);
-  const totalNetInvested = cycles.reduce((s, c) => s + c.netInvested, 0);
+  
 
   const areaChartData = VALUATION_POINTS.map(v => {
     const g = cycles.map(c => calculateGains(c, v));
