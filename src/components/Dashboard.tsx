@@ -76,6 +76,7 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
 
   const gains = cycles.map(c => calculateGains(c, valuation));
   const totalOutlay = cycles.reduce((s, c) => s + c.totalOutlay, 0);
+  const cycleCount = cycles.length;
   
 
   const chartData = VALUATION_POINTS.map(v => {
