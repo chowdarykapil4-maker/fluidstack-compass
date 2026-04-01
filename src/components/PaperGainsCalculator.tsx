@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
-import { CycleData, calculateGains, formatCurrency, formatValuation, formatMultiple } from "@/lib/calculations";
+import { CycleData, calculateGains, formatCurrency, formatValuation, formatMultiple, parseValuationInput } from "@/lib/calculations";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 
 interface Props {
@@ -70,7 +70,8 @@ function WaterfallCard({ cycle, valuation }: { cycle: CycleData; valuation: numb
 
 export default function PaperGainsCalculator({ cycles }: Props) {
   const [valuation, setValuation] = useState(7_500_000_000);
-  const [inputText, setInputText] = useState("7500000000");
+  const [inputText, setInputText] = useState("");
+  const [inputFocused, setInputFocused] = useState(false);
 
   const gains = cycles.map(c => calculateGains(c, valuation));
   const combinedNetGain = gains.reduce((s, g) => s + g.netGain, 0);
@@ -87,15 +88,27 @@ export default function PaperGainsCalculator({ cycles }: Props) {
   const handleSlider = (v: number[]) => {
     const val = v[0];
     setValuation(val);
-    setInputText(String(val));
+  };
+
+  const handleInputFocus = () => {
+    setInputFocused(true);
+    setInputText(String(valuation));
+  };
+
+  const handleInputBlur = () => {
+    setInputFocused(false);
+    const parsed = parseValuationInput(inputText);
+    if (parsed && parsed >= 500_000_000 && parsed <= 50_000_000_000) {
+      setValuation(parsed);
+    }
   };
 
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const raw = e.target.value.replace(/[^0-9]/g, '');
+    const raw = e.target.value.replace(/[^0-9.]/g, '');
     setInputText(raw);
-    const num = parseInt(raw);
-    if (!isNaN(num) && num >= 500_000_000 && num <= 50_000_000_000) {
-      setValuation(num);
+    const parsed = parseValuationInput(raw);
+    if (parsed && parsed >= 500_000_000 && parsed <= 50_000_000_000) {
+      setValuation(parsed);
     }
   };
 
@@ -118,12 +131,15 @@ export default function PaperGainsCalculator({ cycles }: Props) {
             </div>
           </div>
           <div className="w-48">
-            <label className="text-xs text-muted-foreground mb-2 block">Manual Input ($)</label>
+            <label className="text-xs text-muted-foreground mb-1 block">Manual Input</label>
             <Input
-              value={inputText}
+              value={inputFocused ? inputText : formatValuation(valuation)}
               onChange={handleInput}
+              onFocus={handleInputFocus}
+              onBlur={handleInputBlur}
               className="font-mono-nums bg-secondary border-border"
             />
+            <span className="text-xs text-muted-foreground mt-0.5 block">Enter value in $</span>
           </div>
           <div className="text-center">
             <p className="text-xs text-muted-foreground">Selected</p>

@@ -1,7 +1,7 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
-import { DEFAULT_CYCLES, CycleData, calculateGains, formatValuation } from "@/lib/calculations";
+import { DEFAULT_CYCLES, CycleData, calculateGains, formatValuation, parseValuationInput } from "@/lib/calculations";
 import InvestmentOverview from "@/components/InvestmentOverview";
 import PaperGainsCalculator from "@/components/PaperGainsCalculator";
 import ExitScenarioModeler from "@/components/ExitScenarioModeler";
@@ -35,7 +35,8 @@ function loadState(): AppState {
 export default function Index() {
   const [state, setState] = useState<AppState>(loadState);
   const [lastUpdated, setLastUpdated] = useState(new Date());
-  const [valInput, setValInput] = useState(String(state.currentValuation));
+  const [valFocused, setValFocused] = useState(false);
+  const [valInput, setValInput] = useState("");
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -44,13 +45,22 @@ export default function Index() {
 
   const gains = state.cycles.map(c => calculateGains(c, state.currentValuation));
 
-  const handleValuationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const raw = e.target.value.replace(/[^0-9]/g, '');
+  const handleValFocus = () => {
+    setValFocused(true);
+    setValInput(String(state.currentValuation));
+  };
+
+  const handleValBlur = () => {
+    setValFocused(false);
+    const parsed = parseValuationInput(valInput);
+    if (parsed) setState(s => ({ ...s, currentValuation: parsed }));
+  };
+
+  const handleValChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value.replace(/[^0-9.]/g, '');
     setValInput(raw);
-    const num = parseInt(raw);
-    if (!isNaN(num) && num > 0) {
-      setState(s => ({ ...s, currentValuation: num }));
-    }
+    const parsed = parseValuationInput(raw);
+    if (parsed) setState(s => ({ ...s, currentValuation: parsed }));
   };
 
   return (
@@ -68,13 +78,17 @@ export default function Index() {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <label className="text-xs text-muted-foreground">Current Mark:</label>
-            <Input
-              value={valInput}
-              onChange={handleValuationChange}
-              className="w-40 font-mono-nums bg-secondary border-border text-sm"
-            />
-            <span className="text-sm font-semibold text-primary font-mono-nums">{formatValuation(state.currentValuation)}</span>
+            <div>
+              <label className="text-xs text-muted-foreground block">Current Mark:</label>
+              <Input
+                value={valFocused ? valInput : formatValuation(state.currentValuation)}
+                onChange={handleValChange}
+                onFocus={handleValFocus}
+                onBlur={handleValBlur}
+                className="w-40 font-mono-nums bg-secondary border-border text-sm"
+              />
+              <span className="text-xs text-muted-foreground mt-0.5 block">Enter value in $</span>
+            </div>
           </div>
         </div>
       </header>

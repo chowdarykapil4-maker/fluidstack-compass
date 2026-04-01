@@ -11,6 +11,14 @@ export interface CycleData {
   managementFeeBreakdown: string;
   netInvested: number;
 }
+/** Parse shorthand valuation input: numbers < 1000 are treated as billions */
+export function parseValuationInput(raw: string): number | null {
+  const cleaned = raw.replace(/[^0-9.]/g, '');
+  const num = parseFloat(cleaned);
+  if (isNaN(num) || num <= 0) return null;
+  return num < 1000 ? num * 1_000_000_000 : num;
+}
+
 
 export interface CarryStructure {
   tier1Rate: number;
