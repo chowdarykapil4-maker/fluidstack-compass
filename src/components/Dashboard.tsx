@@ -13,9 +13,8 @@ interface Props {
 
 const VALUATION_POINTS = [500e6, 1e9, 2.5e9, 5e9, 7.5e9, 10e9, 12.5e9, 15e9, 17.5e9, 20e9, 25e9, 30e9, 35e9, 40e9, 50e9];
 
-const VALUATION_PRESETS: { value: number; label: string; sub?: string }[] = [
-  { value: 1_200_000_000, label: "$1.2B", sub: "C1 entry" },
-  { value: 7_500_000_000, label: "$7.5B", sub: "Current" },
+const VALUATION_PRESETS: { value: number; label: string }[] = [
+  { value: 7_500_000_000, label: "$7.5B" },
   { value: 10_000_000_000, label: "$10B" },
   { value: 15_000_000_000, label: "$15B" },
   { value: 20_000_000_000, label: "$20B" },
