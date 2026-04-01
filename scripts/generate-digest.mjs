@@ -1,128 +1,61 @@
 import { readFileSync, writeFileSync, existsSync } from 'fs';
 
-const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
-if (!ANTHROPIC_API_KEY) {
-  console.error('Missing ANTHROPIC_API_KEY environment variable');
-  process.exit(1);
-}
+var KEY = process.env.ANTHROPIC_API_KEY;
+if (!KEY) { console.error('Missing ANTHROPIC_API_KEY'); process.exit(1); }
 
-const today = new Date();
-const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
-const lastMonthEnd = new Date(today.getFullYear(), today.getMonth(), 0);
-const formatDate = (d) => d.toISOString().split('T')[0];
-const monthLabel = lastMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+var today = new Date();
+var lm = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+var lmEnd = new Date(today.getFullYear(), today.getMonth(), 0);
+function fd(d) { return d.toISOString().split('T')[0]; }
+var ml = lm.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 
-async function generateDigest() {
-  console.log('Generating digest for ' + monthLabel);
+async function run() {
+  console.log('Digest for ' + ml + ' (' + fd(lm) + ' to ' + fd(lmEnd) + ')');
 
-  var response = await fetch('https://api.anthropic.com/v1/messages', {
+  var p = 'You are a research assistant finding ALL news about FluidStack from ' + ml + ' (' + fd(lm) + ' to ' + fd(lmEnd) + '). ';
+  p += 'Do at least 5 separate web searches: 1) FluidStack ' + ml + ' 2) FluidStack GPU cloud 3) FluidStack TeraWulf 4) FluidStack Anthropic 5) FluidStack Series B 2026 6) FluidStack news. ';
+  p += 'Compile every unique mention into JSON. Include funding, partnerships, deals, infrastructure, customers, hiring, market analysis. Even minor mentions count. ';
+  p += 'Respond ONLY with JSON, no markdown: {"items":[{"headline":"max 80 chars","summary":"one sentence","source":"name","url":"https://...","category":"funding|partnership|product|hiring|market|other"}],"quiet":false} ';
+  p += 'If zero mentions found return {"items":[],"quiet":true}. Do not fabricate news.';
+
+  var r = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': ANTHROPIC_API_KEY,
-      'anthropic-version': '2023-06-01',
-    },
+    headers: { 'Content-Type': 'application/json', 'x-api-key': KEY, 'anthropic-version': '2023-06-01' },
     body: JSON.stringify({
       model: 'claude-sonnet-4-20250514',
       max_tokens: 4000,
       tools: [{ type: 'web_search_20250305', name: 'web_search' }],
-      messages: [{
-        role: 'user',
-        content: 'You are a research assistant. Your job is to find ALL news about FluidStack from ' + monthLabel + ' (' + formatDate(lastMonth) + ' to ' + formatDate(lastMonthEnd) + '). You MUST perform multiple separate web searches to be thorough. Do at least 5 different searches using these queries one by one: 1) "FluidStack ' + monthLabel + '" 2) "FluidStack GPU cloud" 3) "FluidStack TeraWulf" 4) "FluidStack Anthropic data center" 5) "FluidStack Series B 2026" 6) Also try: "FluidStack" news. After completing ALL searches, compile every unique FluidStack mention you found from ' + monthLabel + ' into a JSON response. Include news about: funding, partnerships, deals, infrastructure buildouts, customer wins, executive changes, market analysis that names FluidStack, or any other mentions. Even minor mentions count. Respond ONLY with a JSON object, no markdown fences, no preamble: {"items":[{"headline":"Short headline max 80 chars","summary":"One sentence summary","source":"Publication name","url":"https://...","category":"funding|partnership|product|hiring|market|other"}],"quiet":false} If after all searches you genuinely found zero FluidStack mentions from ' + monthLabel + ', return: {"items":[],"quiet":true} Do not fabricate or hallucinate any news items. Only include real articles you found via search.'
-      }],
-    }),
+      messages: [{ role: 'user', content: p }]
+    })
   });
 
-  if (!response.ok) {
-    var err = await response.text();
-    console.error('API error:', response.status, err);
-    process.exit(1);
-  }
+  if (!r.ok) { console.error('API error: ' + r.status + ' ' + (await r.text())); process.exit(1); }
 
-  var data = await response.json();
-  var textBlocks = data.content.filter(function(b) { return b.type === 'text'; });
-  var rawText = textBlocks.map(function(b) { return b.text; }).join('\n');
-  var cleaned = rawText.replace(/```json\s*|```\s*/g, '').trim();
+  var data = await r.json();
+  var txt = data.content.filter(function(b){return b.type==='text';}).map(function(b){return b.text;}).join('\n');
+  var clean = txt.replace(/```json\s*|```\s*/g, '').trim();
+  console.log('Response length: ' + txt.length);
+  console.log('Preview: ' + txt.substring(0, 300));
 
-  console.log('Raw response length: ' + rawText.length);
-  console.log('First 500 chars: ' + rawText.substring(0, 500));
+  var dig;
+  try { dig = JSON.parse(clean); } catch(e) { console.error('Parse fail: ' + e.message); dig = {items:[],quiet:true}; }
 
-  var digest;
-  try {
-    digest = JSON.parse(cleaned);
-  } catch (e) {
-    console.error('Failed to parse digest JSON:', e.message);
-    console.error('Raw response:', rawText);
-    digest = { items: [], quiet: true };
-  }
+  var n = dig.items ? dig.items.length : 0;
+  console.log('Items found: ' + n);
 
-  console.log('Found ' + (digest.items ? digest.items.length : 0) + ' items');
+  var entry = { week: fd(today), label: ml, generatedAt: today.toISOString(), quiet: n===0, summary: n===0 ? 'Quiet month — no major FluidStack news.' : n + (n>1?' items':' item') + ' this month.', items: dig.items||[] };
 
-  var entry = {
-    week: formatDate(today),
-    label: monthLabel,
-    generatedAt: today.toISOString(),
-    quiet: digest.quiet || !digest.items || digest.items.length === 0,
-    summary: (digest.quiet || !digest.items || digest.items.length === 0) ? 'Quiet month — no major FluidStack news.' : digest.items.length + ' item' + (digest.items.length > 1 ? 's' : '') + ' this month.',
-    items: digest.items || [],
-  };
+  var path = 'public/news.json';
+  var nd = {digests:[]};
+  if (existsSync(path)) { try { nd = JSON.parse(readFileSync(path,'utf-8')); } catch(e2) { nd = {digests:[]}; } }
 
-  var newsPath = 'public/news.json';
-  var newsData = { digests: [] };
-  if (existsSync(newsPath)) {
-    try {
-      newsData = JSON.parse(readFileSync(newsPath, 'utf-8'));
-    } catch (e2) {
-      newsData = { digests: [] };
-    }
-  }
+  var found = false;
+  for (var i=0; i<nd.digests.length; i++) { if (nd.digests[i].week===entry.week) { nd.digests[i]=entry; found=true; break; } }
+  if (!found) { nd.digests.unshift(entry); }
+  nd.digests = nd.digests.slice(0,12);
 
-  var existingIndex = newsData.digests.findIndex(function(d) { return d.week === entry.week; });
-  if (existingIndex >= 0) {
-    newsData.digests[existingIndex] = entry;
-    console.log('Updated existing digest for ' + entry.week);
-  } else {
-    newsData.digests.unshift(entry);
-    console.log('Added new digest for ' + entry.week);
-  }
-
-  newsData.digests = newsData.digests.slice(0, 12);
-  writeFileSync(newsPath, JSON.stringify(newsData, null, 2));
-  console.log('Wrote ' + newsPath);
-  console.log('Digest: ' + (entry.quiet ? 'Quiet month' : entry.items.length + ' items'));
+  writeFileSync(path, JSON.stringify(nd, null, 2));
+  console.log('Done: ' + (n===0 ? 'Quiet month' : n + ' items'));
 }
 
-generateDigest().catch(function(err) {
-  console.error('Fatal error:', err);
-  process.exit(1);
-});  };
-
-  var newsPath = 'public/news.json';
-  var newsData = { digests: [] };
-  if (existsSync(newsPath)) {
-    try {
-      newsData = JSON.parse(readFileSync(newsPath, 'utf-8'));
-    } catch (e2) {
-      newsData = { digests: [] };
-    }
-  }
-
-  var existingIndex = newsData.digests.findIndex(function(d) { return d.week === entry.week; });
-  if (existingIndex >= 0) {
-    newsData.digests[existingIndex] = entry;
-    console.log('Updated existing digest for ' + entry.week);
-  } else {
-    newsData.digests.unshift(entry);
-    console.log('Added new digest for ' + entry.week);
-  }
-
-  newsData.digests = newsData.digests.slice(0, 12);
-  writeFileSync(newsPath, JSON.stringify(newsData, null, 2));
-  console.log('Wrote ' + newsPath);
-  console.log('Digest: ' + (entry.quiet ? 'Quiet month' : entry.items.length + ' items'));
-}
-
-generateDigest().catch(function(err) {
-  console.error('Fatal error:', err);
-  process.exit(1);
-});
+run().then(function(){process.exit(0);}).catch(function(e){console.error(e);process.exit(1);});
