@@ -161,7 +161,7 @@ export default function Index() {
       </main>
 
       <footer className="border-t border-border py-3 text-center text-[11px] text-muted-foreground pb-[env(safe-area-inset-bottom)]">
-        For personal tracking only. Not financial advice. All gains are illiquid and unrealized.
+        For personal tracking only. Not financial advice. All gains are illiquid and unrealized. · All data stored locally on your device.
       </footer>
     </div>
   );
