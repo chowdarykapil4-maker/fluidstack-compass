@@ -163,7 +163,7 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
     const raw = e.target.value.replace(/[^0-9.]/g, "");
     setInputText(raw);
     const parsed = parseValuationInput(raw);
-    if (parsed && parsed >= 500_000_000 && parsed <= 50_000_000_000) setValuation(parsed);
+    if (parsed && parsed >= 500_000_000 && parsed <= 200_000_000_000) setValuation(parsed);
   };
 
   return (
