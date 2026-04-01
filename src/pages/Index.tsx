@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
-import { DEFAULT_CYCLES, CycleData, calculateGains, formatValuation, parseValuationInput } from "@/lib/calculations";
+import { DEFAULT_CYCLES, CycleData, calculateGains, formatValuation, formatCurrency, formatMultiple, parseValuationInput } from "@/lib/calculations";
 import InvestmentOverview from "@/components/InvestmentOverview";
 import PaperGainsCalculator from "@/components/PaperGainsCalculator";
 import ExitScenarioModeler from "@/components/ExitScenarioModeler";
