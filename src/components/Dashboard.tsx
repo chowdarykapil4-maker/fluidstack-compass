@@ -41,9 +41,13 @@ function GainCard({ cycle, valuation }: { cycle: CycleData; valuation: number })
             <Row label="Carry Tier 2 (22.5%)" value={`-${formatCurrency(gain.carryTier2)}`} muted />
           </>
         )}
-        <div className="border-t border-border my-1" />
-        <Row label="Net Gain to LP" value={formatCurrency(gain.netGain)} highlight={isNetPositive} negative={!isNetPositive && gain.netGain !== 0} bold large />
-        <Row label="Net Multiple" value={formatMultiple(gain.netMultipleOnOutlay)} highlight={gain.netMultipleOnOutlay >= 1} negative={gain.netMultipleOnOutlay < 1} />
+        <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
+          <span className="text-secondary-foreground text-sm font-semibold">Net Gain to LP</span>
+          <span className={`font-mono-nums font-semibold text-lg ${isNetPositive ? 'text-gain-positive' : ''} ${!isNetPositive && gain.netGain !== 0 ? 'text-gain-negative' : ''}`}>
+            {formatCurrency(gain.netGain)}
+          </span>
+        </div>
+        <Row label="Net Multiple" value={formatMultiple(gain.netMultipleOnOutlay)} muted />
       </div>
     </Card>
   );
@@ -72,7 +76,7 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
 
   const gains = cycles.map(c => calculateGains(c, valuation));
   const totalOutlay = cycles.reduce((s, c) => s + c.totalOutlay, 0);
-  const totalNetInvested = cycles.reduce((s, c) => s + c.netInvested, 0);
+  
 
   const areaChartData = VALUATION_POINTS.map(v => {
     const g = cycles.map(c => calculateGains(c, v));
@@ -113,7 +117,7 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
         >
           <span className="text-muted-foreground">
             <span className="text-foreground font-medium">Investment Details</span>
-            <span className="ml-3 text-xs">2 positions · {formatCurrency(totalOutlay)} total outlay · {formatCurrency(totalNetInvested)} net invested · Class A + B</span>
+            <span className="ml-3 text-xs">2 positions · ${Math.round(totalOutlay).toLocaleString()} deployed · Class A + B</span>
           </span>
           {detailsOpen ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
         </button>
@@ -142,19 +146,7 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
 
       {/* Section 2: Valuation Modeler */}
       <Card className="p-5 bg-card border-border">
-        <div className="flex items-center gap-4 mb-3">
-          <p className="text-2xl font-bold font-mono-nums text-primary">{formatValuation(valuation)}</p>
-          <div className="w-40">
-            <Input
-              value={inputFocused ? inputText : formatValuation(valuation)}
-              onChange={handleInput}
-              onFocus={handleInputFocus}
-              onBlur={handleInputBlur}
-              placeholder="e.g. 12 for $12B"
-              className="font-mono-nums bg-secondary border-border text-sm h-8"
-            />
-          </div>
-        </div>
+        <p className="text-3xl font-bold font-mono-nums text-primary text-center mb-4">{formatValuation(valuation)}</p>
         <Slider
           value={[valuation]}
           onValueChange={handleSlider}
@@ -163,8 +155,22 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
           step={100_000_000}
           className="w-full"
         />
-        <div className="flex justify-between text-xs text-muted-foreground mt-1">
-          <span>$500M</span><span>$50B</span>
+        <div className="flex items-center justify-between mt-1">
+          <div className="flex gap-[1px] text-xs text-muted-foreground">
+            <span>$500M</span>
+            <span className="mx-auto" />
+          </div>
+          <div className="w-36">
+            <Input
+              value={inputFocused ? inputText : formatValuation(valuation)}
+              onChange={handleInput}
+              onFocus={handleInputFocus}
+              onBlur={handleInputBlur}
+              placeholder="e.g. 12 for $12B"
+              className="font-mono-nums bg-secondary border-border text-xs h-7"
+            />
+          </div>
+          <span className="text-xs text-muted-foreground">$50B</span>
         </div>
       </Card>
 
