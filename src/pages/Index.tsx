@@ -71,9 +71,8 @@ export default function Index() {
             </div>
             <div>
               <h1 className="text-lg font-bold text-foreground">
-                FluidStack Tracker{state.profile.name && state.profile.name !== "Investor" ? ` · ${state.profile.name}` : ""}
+                FluidStack Compass{state.profile.name && state.profile.name !== "Investor" ? ` · ${state.profile.name}` : ""}
               </h1>
-              <p className="text-xs text-muted-foreground">Root Capital LLC SPV</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
