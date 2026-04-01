@@ -82,9 +82,11 @@ export default function SettingsModal({ open, onOpenChange, profile, onSave, isF
                   onChange={e => setDraft(d => ({ ...d, cycle1Committed: Math.max(0, Number(e.target.value)) }))}
                   className="font-mono-nums bg-secondary border-border"
                 />
-                <p className="text-xs text-muted-foreground font-mono-nums">
-                  Fee (5%): {formatCurrency(c1Fee)} · Net Invested: {formatCurrency(draft.cycle1Committed)} · Total Outlay: {formatCurrency(c1Outlay)}
-                </p>
+                <div className="flex flex-col gap-0.5 text-xs text-muted-foreground font-mono-nums">
+                  <span>Fee (5%): {formatCurrency(c1Fee)}</span>
+                  <span>Net Invested: {formatCurrency(draft.cycle1Committed)}</span>
+                  <span>Total Outlay: {formatCurrency(c1Outlay)}</span>
+                </div>
               </>
             )}
           </div>
@@ -117,9 +119,11 @@ export default function SettingsModal({ open, onOpenChange, profile, onSave, isF
                   onChange={e => setDraft(d => ({ ...d, cycle2Committed: Math.max(0, Number(e.target.value)) }))}
                   className="font-mono-nums bg-secondary border-border"
                 />
-                <p className="text-xs text-muted-foreground font-mono-nums">
-                  Fee (7.5%): {formatCurrency(c2Fee)} · Net Invested: {formatCurrency(draft.cycle2Committed)} · Total Outlay: {formatCurrency(c2Outlay)}
-                </p>
+                <div className="flex flex-col gap-0.5 text-xs text-muted-foreground font-mono-nums">
+                  <span>Fee (7.5%): {formatCurrency(c2Fee)}</span>
+                  <span>Net Invested: {formatCurrency(draft.cycle2Committed)}</span>
+                  <span>Total Outlay: {formatCurrency(c2Outlay)}</span>
+                </div>
               </>
             )}
           </div>

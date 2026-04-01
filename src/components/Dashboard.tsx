@@ -23,6 +23,12 @@ const VALUATION_PRESETS: { value: number; label: string; sub?: string }[] = [
   { value: 50_000_000_000, label: "$50B" },
 ];
 
+function shortLabel(cycle: CycleData): string {
+  const num = cycle.label.match(/\d+/)?.[0] || "";
+  const round = cycle.roundName.replace(/^\$[\d.]+[MBK]?\s*/, "");
+  return `C${num} (${round})`;
+}
+
 function UnifiedCycleCard({ cycle, valuation }: { cycle: CycleData; valuation: number }) {
   const gain = calculateGains(cycle, valuation);
   const isPositive = gain.grossGain >= 0;
@@ -41,11 +47,12 @@ function UnifiedCycleCard({ cycle, valuation }: { cycle: CycleData; valuation: n
         </p>
         <p className="text-xs text-muted-foreground">
           Entry: <span className="font-mono-nums text-foreground">{formatValuation(cycle.entryValuation)}</span>
-          {' · '}Outlay: <span className="font-mono-nums text-foreground">{formatCurrency(cycle.totalOutlay)}</span>
-          {' · '}Fee: <span className="font-mono-nums text-foreground">{formatCurrency(cycle.managementFee)}</span>
+          {' · '}Round: <span className="font-mono-nums text-foreground">{cycle.roundName}</span>
         </p>
         <p className="text-xs text-muted-foreground">
-          Net Invested: <span className="font-mono-nums text-foreground">{formatCurrency(cycle.netInvested)}</span>
+          Outlay: <span className="font-mono-nums text-foreground">{formatCurrency(cycle.totalOutlay)}</span>
+          {' · '}Fee: <span className="font-mono-nums text-foreground">{formatCurrency(cycle.managementFee)}</span>
+          {' · '}Net: <span className="font-mono-nums text-foreground">{formatCurrency(cycle.netInvested)}</span>
         </p>
         <p className="text-primary text-xs italic">
           {cycle.memberClass === 'A' ? '20% carry up to 6.25×, then 22.5% above' : 'Carry from 1× on all gains (22.5%)'}
@@ -111,7 +118,7 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
     const g = cycles.map(c => calculateGains(c, v));
     const combined = g.reduce((s, x) => s + x.netGain, 0);
     const entry: Record<string, number | string> = { valuation: v, label: formatValuation(v), Combined: combined };
-    cycles.forEach((c, i) => { entry[c.label] = g[i]?.netGain || 0; });
+    cycles.forEach((c, i) => { entry[shortLabel(c)] = g[i]?.netGain || 0; });
     return entry;
   });
   const selectedLabel = formatValuation(valuation);
@@ -138,13 +145,13 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
     <div className="space-y-4">
       {/* Valuation Control Strip */}
       <div className="bg-primary/[0.03] border border-primary/15 rounded-lg px-4 py-3">
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
           <div className="shrink-0">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Valuation</p>
+            <p className="text-[11px] uppercase tracking-wider text-muted-foreground">Valuation</p>
             <p className="text-xl font-semibold font-mono-nums text-primary">{formatValuation(valuation)}</p>
           </div>
-          <div className="flex-1 flex items-center gap-2">
-            <span className="text-[10px] text-muted-foreground shrink-0">$500M</span>
+          <div className="flex-1 flex items-center gap-2 min-h-[44px] sm:min-h-0">
+            <span className="text-[11px] text-muted-foreground shrink-0">$500M</span>
             <Slider
               value={[valuation]}
               onValueChange={handleSlider}
@@ -153,7 +160,7 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
               step={100_000_000}
               className="flex-1"
             />
-            <span className="text-[10px] text-muted-foreground shrink-0">$50B</span>
+            <span className="text-[11px] text-muted-foreground shrink-0">$50B</span>
           </div>
           <Input
             value={inputFocused ? inputText : formatValuation(valuation)}
@@ -161,7 +168,7 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
             placeholder="e.g. 12"
-            className="font-mono-nums bg-secondary border-border text-xs h-8 w-20 text-center shrink-0"
+            className="font-mono-nums bg-secondary border-border text-xs h-8 w-20 text-center shrink-0 self-end sm:self-auto"
           />
         </div>
       </div>
@@ -181,7 +188,7 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
               }`}
             >
               {p.label}
-              {p.sub && <span className="block text-[9px] leading-tight opacity-70">{p.sub}</span>}
+              {p.sub && <span className="block text-[10px] leading-tight opacity-70">{p.sub}</span>}
             </button>
           );
         })}
@@ -190,7 +197,7 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
       {/* Contextual divider with portfolio summary */}
       <div className="flex items-center gap-3">
         <div className="flex-1 h-px bg-primary/10" />
-        <span className="text-[10px] uppercase tracking-wider text-primary/30">
+        <span className="text-[11px] uppercase tracking-wider text-primary/30">
           {cycleCount} position{cycleCount !== 1 ? 's' : ''} · ${Math.round(totalOutlay).toLocaleString()} deployed
         </span>
         <div className="flex-1 h-px bg-primary/10" />
@@ -206,7 +213,7 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
       {/* Net Gains Chart */}
       <Card className="p-5 bg-card border-border">
         <h4 className="font-semibold text-foreground mb-4">Net Gains Across Valuations</h4>
-        <ResponsiveContainer width="100%" height={300}>
+        <ResponsiveContainer width="100%" height={250}>
           <LineChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(160 10% 16%)" />
             <XAxis dataKey="label" tick={{ fill: 'hsl(150 5% 55%)', fontSize: 11 }} interval="preserveStartEnd" />
@@ -219,7 +226,7 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
             <ReferenceLine x={selectedLabel} stroke="hsl(152, 68%, 45%)" strokeDasharray="4 4" label={{ value: "Selected", fill: "hsl(152, 68%, 45%)", fontSize: 11, position: "top" }} />
             {cycleCount > 1 && <Line type="monotone" dataKey="Combined" stroke="hsl(150, 10%, 92%)" strokeWidth={2.5} dot={{ r: 3 }} />}
             {cycles.map((c, i) => (
-              <Line key={c.label} type="monotone" dataKey={c.label} stroke={i === 0 ? "hsl(152, 68%, 45%)" : "hsl(152, 40%, 35%)"} strokeWidth={2} strokeDasharray={i > 0 ? "6 3" : undefined} dot={{ r: 2.5 }} />
+              <Line key={c.label} type="monotone" dataKey={shortLabel(c)} stroke={i === 0 ? "hsl(152, 68%, 45%)" : "hsl(152, 40%, 35%)"} strokeWidth={2} strokeDasharray={i > 0 ? "6 3" : undefined} dot={{ r: 2.5 }} />
             ))}
           </LineChart>
         </ResponsiveContainer>

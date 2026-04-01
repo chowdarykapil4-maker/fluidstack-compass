@@ -60,8 +60,8 @@ export default function Index() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className="container max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+      <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10 pt-[env(safe-area-inset-top)]">
+        <div className="container max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
               <TrendingUp className="w-4 h-4 text-primary" />
@@ -97,11 +97,11 @@ export default function Index() {
         const blendedMultiple = combinedNetPosition / totalOutlay;
         const holdingMonths = (investmentDate: string) =>
           Math.round((Date.now() - new Date(investmentDate).getTime()) / (1000 * 60 * 60 * 24 * 30.44));
-        const Divider = () => <span className="border-r border-border/50 h-4" />;
+        const Divider = () => <span className="hidden sm:inline-block border-r border-border/50 h-4" />;
 
         return (
           <div className="py-2 px-4 bg-secondary/50 border-b border-border">
-            <div className="container max-w-7xl mx-auto flex items-center justify-center gap-6 text-xs">
+            <div className="container max-w-5xl mx-auto flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[11px] sm:text-xs">
               <span className="text-muted-foreground"><span className="font-mono-nums text-foreground">${Math.round(totalOutlay).toLocaleString()}</span> deployed</span>
               <Divider />
               <span className="text-muted-foreground">Net Gain: <span className={`font-mono-nums ${combinedNetGain >= 0 ? 'text-gain-positive' : 'text-gain-negative'}`}>{combinedNetGain >= 0 ? '+' : ''}{formatCurrency(combinedNetGain)}</span></span>
@@ -111,7 +111,7 @@ export default function Index() {
               {cycles.map((c, i) => {
                 const mo = holdingMonths(c.investmentDate);
                 return (
-                  <span key={i} className="flex items-center gap-6">
+                  <span key={i} className="flex items-center gap-4">
                     {i > 0 && <Divider />}
                     <span className="text-muted-foreground">C{i + 1}: <span className="font-mono-nums text-foreground">{mo} mo</span></span>
                   </span>
@@ -123,7 +123,7 @@ export default function Index() {
       })()}
 
       {/* Main */}
-      <main className="container max-w-7xl mx-auto px-4 py-6">
+      <main className="container max-w-5xl mx-auto px-4 py-6">
         {cycles.length === 0 ? (
           <div className="text-center py-20 text-muted-foreground">
             <p className="text-lg mb-2">No cycles enabled</p>
@@ -131,11 +131,11 @@ export default function Index() {
           </div>
         ) : (
           <Tabs defaultValue="dashboard" className="space-y-6">
-            <TabsList className="bg-secondary border border-border">
-              <TabsTrigger value="dashboard" className="data-[state=active]:bg-primary/15 data-[state=active]:text-primary">
+            <TabsList className="bg-secondary border border-border w-full">
+              <TabsTrigger value="dashboard" className="flex-1 data-[state=active]:bg-primary/15 data-[state=active]:text-primary">
                 <BarChart3 className="w-4 h-4 mr-1.5" /> Dashboard
               </TabsTrigger>
-              <TabsTrigger value="scenarios" className="data-[state=active]:bg-primary/15 data-[state=active]:text-primary">
+              <TabsTrigger value="scenarios" className="flex-1 data-[state=active]:bg-primary/15 data-[state=active]:text-primary">
                 <Table2 className="w-4 h-4 mr-1.5" /> Exit Scenarios
               </TabsTrigger>
             </TabsList>
@@ -160,7 +160,7 @@ export default function Index() {
         )}
       </main>
 
-      <footer className="border-t border-border py-6 text-center text-xs text-muted-foreground">
+      <footer className="border-t border-border py-6 text-center text-xs text-muted-foreground pb-[env(safe-area-inset-bottom)]">
         For personal tracking only. Not financial advice. All gains are illiquid and unrealized.
       </footer>
     </div>

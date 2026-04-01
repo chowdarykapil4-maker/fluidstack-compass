@@ -15,6 +15,12 @@ interface Props {
 
 const PRESET_VALUATIONS = [1e9, 2.5e9, 5e9, 7.5e9, 10e9, 15e9, 20e9, 30e9, 50e9];
 
+function shortLabel(cycle: CycleData): string {
+  const num = cycle.label.match(/\d+/)?.[0] || "";
+  const round = cycle.roundName.replace(/^\$[\d.]+[MBK]?\s*/, "");
+  return `C${num} (${round})`;
+}
+
 export default function ExitScenarioModeler({ cycles, currentValuation, customExitRows, onCustomExitRowsChange }: Props) {
   const [newVal, setNewVal] = useState("");
 
@@ -31,8 +37,8 @@ export default function ExitScenarioModeler({ cycles, currentValuation, customEx
   });
 
   const chartData = tableData.map(d => {
-    const entry: Record<string, number | string> = { valuation: d.valuation, label: formatValuation(d.valuation), "Combined Net Gain": d.combinedNetGain };
-    cycles.forEach((c, i) => { entry[`${c.label} Net Gain`] = d.gains[i]?.netGain || 0; });
+    const entry: Record<string, number | string> = { valuation: d.valuation, label: formatValuation(d.valuation), "Combined": d.combinedNetGain };
+    cycles.forEach((c, i) => { entry[shortLabel(c)] = d.gains[i]?.netGain || 0; });
     return entry;
   });
 
@@ -47,14 +53,70 @@ export default function ExitScenarioModeler({ cycles, currentValuation, customEx
     setNewVal("");
   };
 
-  // Cycle 1 crosses 6.25× at 6.25 × $1.2B = $7.5B
   const c1StepUpValuation = cycles.find(c => c.memberClass === 'A')
     ? (cycles.find(c => c.memberClass === 'A')!.entryValuation * 6.25)
     : null;
 
   return (
     <div className="space-y-6">
-      <Card className="p-5 bg-card border-border overflow-x-auto">
+      {/* Mobile card layout */}
+      <div className="md:hidden space-y-3">
+        {tableData.map((row, i) => {
+          const isCurrent = row.valuation === currentValuation;
+          const isStepUp = c1StepUpValuation ? Math.abs(row.valuation - c1StepUpValuation) < 1e8 : false;
+          return (
+            <Card key={i} className={`p-3 space-y-2 text-sm bg-card ${isCurrent ? 'border-primary/30 bg-primary/5' : 'border-border'}`}>
+              <div className="flex items-center justify-between">
+                <span className="font-mono-nums font-semibold text-foreground">
+                  {formatValuation(row.valuation)}
+                  {isCurrent && <span className="ml-2 text-xs text-primary">● current</span>}
+                  {isStepUp && <span className="ml-1 text-xs text-muted-foreground">⬆ 6.25×</span>}
+                </span>
+                {row.isCustom && (
+                  <button onClick={() => onCustomExitRowsChange(customExitRows.filter(v => v !== row.valuation))} className="text-muted-foreground hover:text-gain-negative transition-colors">
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+              {row.gains.map((g, j) => (
+                <div key={j} className="flex items-center justify-between text-xs">
+                  <span className="text-muted-foreground">{shortLabel(cycles[j])}</span>
+                  <div className="flex items-center gap-3">
+                    <span className={`font-mono-nums ${g.netGain >= 0 ? 'text-gain-positive' : 'text-gain-negative'}`}>{formatCurrency(g.netGain)}</span>
+                    <span className="font-mono-nums text-foreground">{formatMultiple(g.netMultipleOnOutlay)}</span>
+                    <span className="text-muted-foreground">{row.carryRates[j]}</span>
+                  </div>
+                </div>
+              ))}
+              {cycles.length > 1 && (
+                <div className="flex items-center justify-between text-xs pt-1 border-t border-border/50">
+                  <span className="text-muted-foreground font-medium">Combined</span>
+                  <div className="flex items-center gap-3">
+                    <span className={`font-mono-nums font-semibold ${row.combinedNetGain >= 0 ? 'text-gain-positive' : 'text-gain-negative'}`}>{formatCurrency(row.combinedNetGain)}</span>
+                    <span className="font-mono-nums font-semibold text-foreground">{formatMultiple(row.combinedMultiple)}</span>
+                  </div>
+                </div>
+              )}
+            </Card>
+          );
+        })}
+
+        <div className="flex items-center gap-2">
+          <Input
+            placeholder="Add valuation (e.g. 12)"
+            value={newVal}
+            onChange={(e) => setNewVal(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && addRow()}
+            className="flex-1 font-mono-nums bg-secondary border-border"
+          />
+          <Button onClick={addRow} size="sm" variant="outline" className="border-primary/30 text-primary hover:bg-primary/10">
+            <Plus className="w-4 h-4 mr-1" /> Add
+          </Button>
+        </div>
+      </div>
+
+      {/* Desktop table layout */}
+      <Card className="hidden md:block p-5 bg-card border-border overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-border">
@@ -132,7 +194,7 @@ export default function ExitScenarioModeler({ cycles, currentValuation, customEx
 
       <Card className="p-5 bg-card border-border">
         <h4 className="font-semibold text-foreground mb-4">Net Gains by Exit Valuation</h4>
-        <ResponsiveContainer width="100%" height={350}>
+        <ResponsiveContainer width="100%" height={250}>
           <LineChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(160 10% 16%)" />
             <XAxis dataKey="label" tick={{ fill: 'hsl(150 5% 55%)', fontSize: 11 }} angle={-30} textAnchor="end" height={60} />
@@ -144,9 +206,9 @@ export default function ExitScenarioModeler({ cycles, currentValuation, customEx
             />
             <Legend />
             <ReferenceLine x={formatValuation(currentValuation)} stroke="hsl(152, 68%, 45%)" strokeDasharray="5 5" label={{ value: "Current", fill: "hsl(152, 68%, 45%)", fontSize: 11 }} />
-            {cycles.length > 1 && <Line type="monotone" dataKey="Combined Net Gain" stroke="hsl(150, 10%, 92%)" strokeWidth={2.5} dot={{ r: 3 }} />}
+            {cycles.length > 1 && <Line type="monotone" dataKey="Combined" stroke="hsl(150, 10%, 92%)" strokeWidth={2.5} dot={{ r: 3 }} />}
             {cycles.map((c, i) => (
-              <Line key={c.label} type="monotone" dataKey={`${c.label} Net Gain`} stroke={i === 0 ? "hsl(152, 68%, 45%)" : "hsl(152, 40%, 25%)"} strokeWidth={2} strokeDasharray={i > 0 ? "6 3" : undefined} dot={{ r: 3 }} />
+              <Line key={c.label} type="monotone" dataKey={shortLabel(c)} stroke={i === 0 ? "hsl(152, 68%, 45%)" : "hsl(152, 40%, 25%)"} strokeWidth={2} strokeDasharray={i > 0 ? "6 3" : undefined} dot={{ r: 3 }} />
             ))}
           </LineChart>
         </ResponsiveContainer>
