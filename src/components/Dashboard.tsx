@@ -22,6 +22,7 @@ import {
   ResponsiveContainer,
   ReferenceLine,
 } from "recharts";
+import MonthlyDigest from "@/components/MonthlyDigest";
 
 interface Props {
   cycles: CycleData[];
