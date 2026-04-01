@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
-import { CycleData, DEFAULT_CARRY, calculateGains, formatCurrency, formatValuation, formatMultiple } from "@/lib/calculations";
+import { CycleData, calculateGains, formatCurrency, formatValuation, formatMultiple } from "@/lib/calculations";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 
 interface Props {
@@ -13,19 +13,38 @@ function WaterfallCard({ cycle, valuation }: { cycle: CycleData; valuation: numb
   const gain = calculateGains(cycle, valuation);
   const isPositive = gain.grossGain >= 0;
 
-  const rows = [
-    { label: "Gross Position Value", value: gain.grossValue, fmt: formatCurrency(gain.grossValue) },
-    { label: "− Original Net Invested", value: -cycle.netInvested, fmt: `-${formatCurrency(cycle.netInvested)}`, muted: true },
-    { label: "= Gross Gain", value: gain.grossGain, fmt: formatCurrency(gain.grossGain), bold: true, highlight: isPositive, negative: !isPositive },
-    { label: "− Carry Tier 1 (20%)", value: -gain.carryTier1, fmt: `-${formatCurrency(gain.carryTier1)}`, muted: true },
-    { label: "− Carry Tier 2 (22.5%)", value: -gain.carryTier2, fmt: `-${formatCurrency(gain.carryTier2)}`, muted: true },
-    { label: "= Net Gain to LP", value: gain.netGain, fmt: formatCurrency(gain.netGain), bold: true, highlight: isPositive, negative: !isPositive },
-    { label: "Net Multiple on Outlay", value: gain.netMultipleOnOutlay, fmt: formatMultiple(gain.netMultipleOnOutlay), bold: true, highlight: gain.netMultipleOnOutlay >= 1, negative: gain.netMultipleOnOutlay < 1 },
+  const baseRows = [
+    { label: "Gross Position Value", fmt: formatCurrency(gain.grossValue) },
+    { label: "− Net Invested Capital", fmt: `-${formatCurrency(cycle.netInvested)}`, muted: true },
+    { label: "= Gross Gain", fmt: formatCurrency(gain.grossGain), bold: true, highlight: isPositive, negative: !isPositive },
   ];
+
+  const carryRows = cycle.memberClass === 'A'
+    ? [
+        {
+          label: gain.valuationMultiple <= 6.25
+            ? "− Carry: $0 (below 6.25× pref)"
+            : "− Carry (22.5% on excess above 6.25×)",
+          fmt: `-${formatCurrency(gain.totalCarry)}`,
+          muted: true,
+        },
+      ]
+    : [
+        { label: "− Carry Tier 1 (20%, 1×–6.25×)", fmt: `-${formatCurrency(gain.carryTier1)}`, muted: true },
+        { label: "− Carry Tier 2 (22.5%, >6.25×)", fmt: `-${formatCurrency(gain.carryTier2)}`, muted: true },
+      ];
+
+  const bottomRows = [
+    { label: "= Net Gain to LP", fmt: formatCurrency(gain.netGain), bold: true, highlight: isPositive, negative: !isPositive },
+    { label: "Net Multiple on Outlay", fmt: formatMultiple(gain.netMultipleOnOutlay), bold: true, highlight: gain.netMultipleOnOutlay >= 1, negative: gain.netMultipleOnOutlay < 1 },
+  ];
+
+  const rows = [...baseRows, ...carryRows, ...bottomRows];
 
   return (
     <Card className="p-5 bg-card border-border">
-      <h4 className="font-semibold text-foreground mb-4">{cycle.label}</h4>
+      <h4 className="font-semibold text-foreground mb-1">{cycle.label}</h4>
+      <p className="text-xs text-muted-foreground mb-4">Class {cycle.memberClass} Member</p>
       <div className="space-y-2.5 text-sm">
         {rows.map((r, i) => (
           <div key={i} className="flex justify-between items-center">
