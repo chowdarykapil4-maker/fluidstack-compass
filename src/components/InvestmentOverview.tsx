@@ -85,7 +85,7 @@ function Row({ label, value, icon, muted, bold, highlight, negative }: {
   );
 }
 
-export default function InvestmentOverview({ cycles, gains, currentValuation, lastUpdated }: Props) {
+export default function InvestmentOverview({ cycles, gains, currentValuation }: Props) {
   const totalOutlay = cycles.reduce((s, c) => s + c.totalOutlay, 0);
   const totalNetInvested = cycles.reduce((s, c) => s + c.netInvested, 0);
   const combinedGrossValue = gains.reduce((s, g) => s + g.grossValue, 0);
@@ -95,11 +95,6 @@ export default function InvestmentOverview({ cycles, gains, currentValuation, la
 
   return (
     <div className="space-y-6">
-      <div className="text-center">
-        <p className="text-xs text-muted-foreground mb-1">Current Mark</p>
-        <p className="text-2xl font-bold font-mono-nums text-primary">{formatValuation(currentValuation)}</p>
-      </div>
-
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {cycles.map((cycle, i) => (
           <CycleCard key={i} cycle={cycle} gain={gains[i]} index={i} />
@@ -115,10 +110,6 @@ export default function InvestmentOverview({ cycles, gains, currentValuation, la
           <Stat label="Blended Net Multiple" value={formatMultiple(blendedMultiple)} highlight={blendedMultiple >= 1} negative={blendedMultiple < 1} />
         </div>
       </Card>
-
-      <p className="text-xs text-muted-foreground text-center">
-        Last updated: {lastUpdated.toLocaleString()}
-      </p>
     </div>
   );
 }
