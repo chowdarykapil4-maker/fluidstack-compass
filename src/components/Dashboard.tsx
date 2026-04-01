@@ -73,7 +73,7 @@ function UnifiedCycleCard({ cycle, valuation }: { cycle: CycleData; valuation: n
           />
         )}
         <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
-          <span className="text-secondary-foreground text-sm font-semibold">Net Gain to LP</span>
+          <span className="text-secondary-foreground text-sm font-semibold">Your Net Gain</span>
           <span className={`font-mono-nums font-semibold text-lg ${isNetPositive ? 'text-gain-positive' : ''} ${!isNetPositive && gain.netGain !== 0 ? 'text-gain-negative' : ''}`}>
             {formatCurrency(gain.netGain)}
           </span>
