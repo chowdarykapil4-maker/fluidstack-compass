@@ -189,7 +189,7 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
       </div>
 
       {/* Unified cycle cards */}
-      <div className={`grid grid-cols-1 ${cycleCount > 1 ? 'lg:grid-cols-2' : ''} gap-4`}>
+      <div className={`grid grid-cols-1 ${cycleCount > 1 ? 'md:grid-cols-2' : ''} gap-4`}>
         {cycles.map((cycle, i) => (
           <UnifiedCycleCard key={i} cycle={cycle} valuation={valuation} />
         ))}
