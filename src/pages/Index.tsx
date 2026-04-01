@@ -70,28 +70,22 @@ export default function Index() {
         const totalOutlay = state.cycles.reduce((s, c) => s + c.totalOutlay, 0);
         const totalNetInvested = state.cycles.reduce((s, c) => s + c.netInvested, 0);
         const combinedGrossValue = gains.reduce((s, g) => s + g.grossValue, 0);
+        const combinedNetGain = gains.reduce((s, g) => s + g.netGain, 0);
         const combinedNetPosition = gains.reduce((s, g) => s + g.grossValue - g.totalCarry, 0);
         const blendedMultiple = combinedNetPosition / totalOutlay;
-        const isPositive = combinedGrossValue >= totalNetInvested;
         const holdingMonths = (cycle: CycleData) =>
           Math.round((Date.now() - new Date(cycle.investmentDate).getTime()) / (1000 * 60 * 60 * 24 * 30.44));
         const Divider = () => <span className="border-r border-border/50 h-4" />;
         return (
           <div className="py-2 px-4 bg-secondary/50 border-b border-border">
-            <div className="container max-w-7xl mx-auto flex items-center justify-center gap-6 text-xs flex-wrap">
-              <span className="text-muted-foreground">Total Outlay: <span className="font-mono-nums text-foreground">{formatCurrency(totalOutlay)}</span></span>
+            <div className="container max-w-7xl mx-auto flex items-center justify-center gap-6 text-xs">
+              <span className="text-muted-foreground">Gross Value: <span className={`font-mono-nums ${combinedGrossValue >= totalNetInvested ? 'text-gain-positive' : 'text-gain-negative'}`}>{formatCurrency(combinedGrossValue)}</span></span>
               <Divider />
-              <span className="text-muted-foreground">Net Invested: <span className="font-mono-nums text-foreground">{formatCurrency(totalNetInvested)}</span></span>
-              <Divider />
-              <span className="text-muted-foreground">Gross Value: <span className={`font-mono-nums ${isPositive ? 'text-gain-positive' : 'text-gain-negative'}`}>{formatCurrency(combinedGrossValue)}</span></span>
+              <span className="text-muted-foreground">Net Gain: <span className={`font-mono-nums ${combinedNetGain >= 0 ? 'text-gain-positive' : 'text-gain-negative'}`}>{formatCurrency(combinedNetGain)}</span></span>
               <Divider />
               <span className="text-muted-foreground">Net Multiple: <span className={`font-mono-nums ${blendedMultiple >= 1 ? 'text-gain-positive' : 'text-gain-negative'}`}>{formatMultiple(blendedMultiple)}</span></span>
               <Divider />
-              <span className="text-muted-foreground">C1 Holding: <span className="font-mono-nums text-foreground">{holdingMonths(state.cycles[0])} mo</span></span>
-              <Divider />
-              <span className="text-muted-foreground">C2 Holding: <span className="font-mono-nums text-foreground">{holdingMonths(state.cycles[1])} mo</span></span>
-              <Divider />
-              <span className="text-muted-foreground">Updated: {lastUpdated.toLocaleString()}</span>
+              <span className="text-muted-foreground">C1: <span className="font-mono-nums text-foreground">{holdingMonths(state.cycles[0])} mo</span> · C2: <span className="font-mono-nums text-foreground">{holdingMonths(state.cycles[1])} mo</span></span>
             </div>
           </div>
         );
