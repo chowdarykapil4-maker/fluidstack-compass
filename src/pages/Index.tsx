@@ -73,9 +73,18 @@ export default function Index() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-sm font-mono-nums text-primary font-semibold bg-primary/10 px-3 py-1.5 rounded-md border border-primary/20">
-              Mark: {formatValuation(state.currentValuation)}
-            </span>
+            {cycles.length > 0 && (() => {
+              const totalOutlay = cycles.reduce((s, c) => s + c.totalOutlay, 0);
+              const combinedNetGain = gains.reduce((s, g) => s + g.netGain, 0);
+              const combinedNetPosition = gains.reduce((s, g) => s + g.grossValue - g.totalCarry, 0);
+              const blendedMultiple = combinedNetPosition / totalOutlay;
+              const isPositive = combinedNetGain >= 0;
+              return (
+                <span className={`text-sm font-mono-nums font-semibold px-3 py-1.5 rounded-md border ${isPositive ? 'text-gain-positive bg-gain-positive/10 border-gain-positive/20' : 'text-gain-negative bg-gain-negative/10 border-gain-negative/20'}`}>
+                  {isPositive ? '+' : ''}{formatCurrency(combinedNetGain)} · {formatMultiple(blendedMultiple)}
+                </span>
+              );
+            })()}
             <button
               onClick={() => setSettingsOpen(true)}
               className="w-9 h-9 flex items-center justify-center rounded-md border border-border text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
