@@ -188,9 +188,10 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
             />
             <Legend />
             <ReferenceLine x={selectedLabel} stroke="hsl(152, 68%, 45%)" strokeDasharray="4 4" label={{ value: "Selected", fill: "hsl(152, 68%, 45%)", fontSize: 11, position: "top" }} />
-            <Line type="monotone" dataKey="Combined" stroke="hsl(150, 10%, 92%)" strokeWidth={2.5} dot={{ r: 3 }} />
-            <Line type="monotone" dataKey="Cycle 1 (Class A)" stroke="hsl(152, 68%, 45%)" strokeWidth={2} dot={{ r: 2.5 }} />
-            <Line type="monotone" dataKey="Cycle 2 (Class B)" stroke="hsl(152, 40%, 35%)" strokeWidth={2} strokeDasharray="6 3" dot={{ r: 2.5 }} />
+            {cycleCount > 1 && <Line type="monotone" dataKey="Combined" stroke="hsl(150, 10%, 92%)" strokeWidth={2.5} dot={{ r: 3 }} />}
+            {cycles.map((c, i) => (
+              <Line key={c.label} type="monotone" dataKey={c.label} stroke={i === 0 ? "hsl(152, 68%, 45%)" : "hsl(152, 40%, 35%)"} strokeWidth={2} strokeDasharray={i > 0 ? "6 3" : undefined} dot={{ r: 2.5 }} />
+            ))}
           </LineChart>
         </ResponsiveContainer>
       </Card>
