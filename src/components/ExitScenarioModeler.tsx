@@ -61,22 +61,25 @@ export default function ExitScenarioModeler({ cycles, currentValuation, customEx
           <thead>
             <tr className="border-b border-border">
               <th className="text-left py-2 px-2 text-muted-foreground font-medium" rowSpan={2}>Exit Valuation</th>
-              <th className="text-center py-1 px-2 text-primary font-medium border-b border-border" colSpan={4}>Cycle 1 — Class A</th>
-              <th className="text-center py-1 px-2 text-emerald-dim font-medium border-b border-border" colSpan={4}>Cycle 2 — Class B</th>
-              <th className="text-center py-1 px-2 text-foreground font-medium border-b border-border" colSpan={2}>Combined</th>
+              {cycles.map((c, i) => (
+                <th key={i} className="text-center py-1 px-2 font-medium border-b border-border" colSpan={4} style={{ color: i === 0 ? 'hsl(var(--primary))' : 'hsl(var(--emerald-dim))' }}>{c.label}</th>
+              ))}
+              {cycles.length > 1 && <th className="text-center py-1 px-2 text-foreground font-medium border-b border-border" colSpan={2}>Combined</th>}
               <th className="py-1 px-1" rowSpan={2}></th>
             </tr>
             <tr className="border-b border-border text-xs text-muted-foreground">
-              <th className="py-1 px-2">Gross Val</th>
-              <th className="py-1 px-2">Net Gain</th>
-              <th className="py-1 px-2">Multiple</th>
-              <th className="py-1 px-2">Carry Rate</th>
-              <th className="py-1 px-2">Gross Val</th>
-              <th className="py-1 px-2">Net Gain</th>
-              <th className="py-1 px-2">Multiple</th>
-              <th className="py-1 px-2">Carry Rate</th>
-              <th className="py-1 px-2">Net Gain</th>
-              <th className="py-1 px-2">Multiple</th>
+              {cycles.map((_, i) => (
+                <React.Fragment key={i}>
+                  <th className="py-1 px-2">Gross Val</th>
+                  <th className="py-1 px-2">Net Gain</th>
+                  <th className="py-1 px-2">Multiple</th>
+                  <th className="py-1 px-2">Carry Rate</th>
+                </React.Fragment>
+              ))}
+              {cycles.length > 1 && <>
+                <th className="py-1 px-2">Net Gain</th>
+                <th className="py-1 px-2">Multiple</th>
+              </>}
             </tr>
           </thead>
           <tbody>
