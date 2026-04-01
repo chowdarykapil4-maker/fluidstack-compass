@@ -160,7 +160,7 @@ export default function Index() {
         )}
       </main>
 
-      <footer className="border-t border-border py-6 text-center text-xs text-muted-foreground pb-[env(safe-area-inset-bottom)]">
+      <footer className="border-t border-border py-3 text-center text-[11px] text-muted-foreground pb-[env(safe-area-inset-bottom)]">
         For personal tracking only. Not financial advice. All gains are illiquid and unrealized.
       </footer>
     </div>
