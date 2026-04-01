@@ -34,22 +34,19 @@ function CategoryPill({ category }: { category: string }) {
 
 function DigestItemRow({ item }: { item: DigestItem }) {
   return (
-    <div className="border-t border-border pt-2.5 space-y-1">
-      <div className="flex items-center gap-2">
-        <CategoryPill category={item.category} />
-        {item.url ? (
-          <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-sm text-foreground hover:underline">
-            {item.headline}
-          </a>
-        ) : (
-          <span className="text-sm text-foreground">{item.headline}</span>
-        )}
-      </div>
-      <p className="text-xs text-muted-foreground">{item.summary}</p>
-      <p className="text-[11px] text-muted-foreground/50 flex items-center gap-1">
+    <div className="border-t border-border pt-1.5 flex items-center gap-2 flex-wrap">
+      <CategoryPill category={item.category} />
+      {item.url ? (
+        <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-xs text-foreground hover:underline truncate">
+          {item.headline}
+        </a>
+      ) : (
+        <span className="text-xs text-foreground truncate">{item.headline}</span>
+      )}
+      <span className="text-[10px] text-muted-foreground/50 flex items-center gap-0.5 ml-auto shrink-0">
         {item.source}
-        {item.url && <ExternalLink className="inline" size={10} />}
-      </p>
+        {item.url && <ExternalLink className="inline" size={9} />}
+      </span>
     </div>
   );
 }
