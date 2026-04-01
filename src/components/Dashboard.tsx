@@ -22,6 +22,7 @@ import {
   ResponsiveContainer,
   ReferenceLine,
 } from "recharts";
+import MonthlyDigest from "@/components/MonthlyDigest";
 
 interface Props {
   cycles: CycleData[];
@@ -230,6 +231,8 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
           <UnifiedCycleCard key={i} cycle={cycle} valuation={valuation} />
         ))}
       </div>
+
+      <MonthlyDigest />
 
       <Card className="p-3 sm:p-5 bg-card border-border">
         <h4 className="text-sm font-medium text-foreground mb-2">Net Gains Across Valuations</h4>
