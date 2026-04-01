@@ -35,7 +35,8 @@ function loadState(): AppState {
 export default function Index() {
   const [state, setState] = useState<AppState>(loadState);
   const [lastUpdated, setLastUpdated] = useState(new Date());
-  const [valInput, setValInput] = useState(String(state.currentValuation));
+  const [valFocused, setValFocused] = useState(false);
+  const [valInput, setValInput] = useState("");
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -44,13 +45,22 @@ export default function Index() {
 
   const gains = state.cycles.map(c => calculateGains(c, state.currentValuation));
 
-  const handleValuationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const raw = e.target.value.replace(/[^0-9]/g, '');
+  const handleValFocus = () => {
+    setValFocused(true);
+    setValInput(String(state.currentValuation));
+  };
+
+  const handleValBlur = () => {
+    setValFocused(false);
+    const parsed = parseValuationInput(valInput);
+    if (parsed) setState(s => ({ ...s, currentValuation: parsed }));
+  };
+
+  const handleValChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value.replace(/[^0-9.]/g, '');
     setValInput(raw);
-    const num = parseInt(raw);
-    if (!isNaN(num) && num > 0) {
-      setState(s => ({ ...s, currentValuation: num }));
-    }
+    const parsed = parseValuationInput(raw);
+    if (parsed) setState(s => ({ ...s, currentValuation: parsed }));
   };
 
   return (
