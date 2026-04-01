@@ -127,23 +127,16 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
         </button>
 
         {detailsOpen && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 px-4 pb-4">
-            {/* Cycle 1 detail card */}
-            <div className="rounded-md border border-border bg-secondary/30 px-4 py-3 text-xs space-y-1">
-              <p className="text-foreground font-medium text-sm">Cycle 1 — Series A <span className="text-muted-foreground font-normal">· Class A Member · TMC Fund 550 LLC</span></p>
-              <p className="text-muted-foreground">Date: August 15, 2025 · Round: $200M Series A</p>
-              <p className="text-muted-foreground">Entry: <span className="font-mono-nums text-foreground">{formatValuation(cycles[0].entryValuation)}</span> · Outlay: <span className="font-mono-nums text-foreground">{formatCurrency(cycles[0].totalOutlay)}</span> · Fee: <span className="font-mono-nums text-foreground">{formatCurrency(cycles[0].managementFee)}</span> (5%)</p>
-              <p className="text-muted-foreground">Net Invested: <span className="font-mono-nums text-foreground">{formatCurrency(cycles[0].netInvested)}</span></p>
-              <p className="text-primary text-xs italic">6.25× preferred return, no carry below threshold</p>
-            </div>
-            {/* Cycle 2 detail card */}
-            <div className="rounded-md border border-border bg-secondary/30 px-4 py-3 text-xs space-y-1">
-              <p className="text-foreground font-medium text-sm">Cycle 2 — Series B <span className="text-muted-foreground font-normal">· Class B Member · TMC Fund 230 LLC</span></p>
-              <p className="text-muted-foreground">Date: January 29, 2026 · Round: $450M Series B</p>
-              <p className="text-muted-foreground">Entry: <span className="font-mono-nums text-foreground">{formatValuation(cycles[1].entryValuation)}</span> · Outlay: <span className="font-mono-nums text-foreground">{formatCurrency(cycles[1].totalOutlay)}</span> · Fee: <span className="font-mono-nums text-foreground">{formatCurrency(cycles[1].managementFee)}</span> (7.5%)</p>
-              <p className="text-muted-foreground">Net Invested: <span className="font-mono-nums text-foreground">{formatCurrency(cycles[1].netInvested)}</span></p>
-              <p className="text-primary text-xs italic">Carry from 1× on all gains (20%/22.5%)</p>
-            </div>
+          <div className={`grid grid-cols-1 ${cycleCount > 1 ? 'lg:grid-cols-2' : ''} gap-3 px-4 pb-4`}>
+            {cycles.map((cycle, i) => (
+              <div key={i} className="rounded-md border border-border bg-secondary/30 px-4 py-3 text-xs space-y-1">
+                <p className="text-foreground font-medium text-sm">{cycle.label} <span className="text-muted-foreground font-normal">· Class {cycle.memberClass} Member · {cycle.fundEntity}</span></p>
+                <p className="text-muted-foreground">Date: {new Date(cycle.investmentDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} · Round: {cycle.roundName}</p>
+                <p className="text-muted-foreground">Entry: <span className="font-mono-nums text-foreground">{formatValuation(cycle.entryValuation)}</span> · Outlay: <span className="font-mono-nums text-foreground">{formatCurrency(cycle.totalOutlay)}</span> · Fee: <span className="font-mono-nums text-foreground">{formatCurrency(cycle.managementFee)}</span></p>
+                <p className="text-muted-foreground">Net Invested: <span className="font-mono-nums text-foreground">{formatCurrency(cycle.netInvested)}</span></p>
+                <p className="text-primary text-xs italic">{cycle.memberClass === 'A' ? '6.25× preferred return, no carry below threshold' : 'Carry from 1× on all gains (22.5%)'}</p>
+              </div>
+            ))}
           </div>
         )}
       </div>
