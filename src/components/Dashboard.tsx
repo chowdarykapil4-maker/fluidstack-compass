@@ -207,9 +207,9 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
       </div>
 
       {/* Net Gains Chart */}
-      <Card className="p-5 bg-card border-border">
-        <h4 className="font-semibold text-foreground mb-4">Net Gains Across Valuations</h4>
-        <ResponsiveContainer width="100%" height={250}>
+      <Card className="p-3 sm:p-5 bg-card border-border">
+        <h4 className="text-sm font-medium text-foreground mb-2">Net Gains Across Valuations</h4>
+        <ResponsiveContainer width="100%" height={220}>
           <LineChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(160 10% 16%)" />
             <XAxis dataKey="label" tick={{ fill: 'hsl(150 5% 55%)', fontSize: 11 }} interval="preserveStartEnd" />
@@ -218,11 +218,11 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
               contentStyle={{ background: 'hsl(160 12% 9%)', border: '1px solid hsl(160 10% 16%)', borderRadius: 8, color: 'hsl(150 10% 92%)' }}
               formatter={(value: number) => formatCurrency(value)}
             />
-            <Legend />
+            <Legend wrapperStyle={{ fontSize: 11 }} />
             <ReferenceLine x={selectedLabel} stroke="hsl(152, 68%, 45%)" strokeDasharray="4 4" label={{ value: "Selected", fill: "hsl(152, 68%, 45%)", fontSize: 11, position: "top" }} />
-            {cycleCount > 1 && <Line type="monotone" dataKey="Combined" stroke="hsl(150, 10%, 92%)" strokeWidth={2.5} dot={{ r: 3 }} />}
+            {cycleCount > 1 && <Line type="monotone" dataKey="Combined" stroke="hsl(150, 10%, 92%)" strokeWidth={2.5} dot={{ r: 2 }} />}
             {cycles.map((c, i) => (
-              <Line key={c.label} type="monotone" dataKey={shortLabel(c)} stroke={i === 0 ? "hsl(152, 68%, 45%)" : "hsl(152, 40%, 35%)"} strokeWidth={2} strokeDasharray={i > 0 ? "6 3" : undefined} dot={{ r: 2.5 }} />
+              <Line key={c.label} type="monotone" dataKey={shortLabel(c)} stroke={i === 0 ? "hsl(152, 68%, 45%)" : "hsl(152, 40%, 35%)"} strokeWidth={2} strokeDasharray={i > 0 ? "6 3" : undefined} dot={{ r: 2 }} />
             ))}
           </LineChart>
         </ResponsiveContainer>
