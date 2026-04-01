@@ -101,16 +101,10 @@ export function calculateGains(
     }
     // carryTier1 stays 0 for Class A
   } else {
-    // Class B: 20% carry from 1× to 6.25×, 22.5% above 6.25×
+    // Class B: flat 22.5% carry on ALL gains above 1× (return of capital)
     if (grossGain > 0) {
-      if (valuationMultiple <= carry.tier1Threshold) {
-        carryTier1 = grossGain * carry.tier1Rate;
-      } else {
-        const gainUpToThreshold = cycle.netInvested * (carry.tier1Threshold - 1);
-        carryTier1 = gainUpToThreshold * carry.tier1Rate;
-        const gainAboveThreshold = grossGain - gainUpToThreshold;
-        carryTier2 = gainAboveThreshold * carry.tier2Rate;
-      }
+      carryTier2 = grossGain * carry.tier2Rate;
+      // carryTier1 stays 0 — no 20% tier for Class B
     }
   }
 
