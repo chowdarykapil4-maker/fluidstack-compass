@@ -3,16 +3,16 @@
     {
       "week": "2026-04-01",
       "label": "Week of April 1, 2026",
-      "generatedAt": "2026-04-01T16:00:00.000Z",
+      "generatedAt": "2026-04-01T21:30:56.432Z",
       "quiet": false,
-      "summary": "Weekly digest is now live! News will auto-update every Friday.",
+      "summary": "1 item this week.",
       "items": [
         {
-          "headline": "FluidStack Compass launches weekly digest",
-          "summary": "Your investment tracker now includes a weekly news feed powered by AI, scanning for FluidStack mentions every Friday.",
-          "source": "FluidStack Compass",
-          "url": "",
-          "category": "product"
+          "headline": "FluidStack drops out of €10B France AI supercomputer project",
+          "summary": "Cloud startup FluidStack pulled out of the high-profile French data center project to focus on larger US contracts after recent wins with Anthropic and TeraWulf partnerships.",
+          "source": "Bloomberg",
+          "url": "https://www.bloomberg.com/news/articles/2026-03-18/fluidstack-drops-out-of-marquee-10-billion-ai-project-in-france",
+          "category": "market"
         }
       ]
     }
