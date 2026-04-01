@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 interface Props {
   cycles: CycleData[];
   currentValuation: number;
+  onValuationChange: (val: number) => void;
 }
 
 const VALUATION_POINTS = [500e6, 1e9, 2.5e9, 5e9, 7.5e9, 10e9, 12.5e9, 15e9, 17.5e9, 20e9, 25e9, 30e9, 35e9, 40e9, 50e9];
