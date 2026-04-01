@@ -81,9 +81,14 @@ export default function SettingsModal({ open, onOpenChange, profile, onSave, isF
               <>
                 <label className="text-xs text-muted-foreground">Capital Committed ($)</label>
                 <Input
-                  type="number"
-                  value={draft.cycle1Committed}
-                  onChange={e => setDraft(d => ({ ...d, cycle1Committed: Math.max(0, Number(e.target.value)) }))}
+                  type="text"
+                  inputMode="numeric"
+                  value={draft.cycle1Committed === 0 ? '' : String(draft.cycle1Committed)}
+                  onChange={e => {
+                    const parsed = parseInt(e.target.value.replace(/[^0-9]/g, ''), 10);
+                    setDraft(d => ({ ...d, cycle1Committed: isNaN(parsed) ? 0 : parsed }));
+                  }}
+                  placeholder="Enter amount"
                   className="font-mono-nums bg-secondary border-border"
                 />
                 <div className="flex flex-col gap-0.5 text-xs text-muted-foreground font-mono-nums">
