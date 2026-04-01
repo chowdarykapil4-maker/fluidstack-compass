@@ -30,13 +30,11 @@ export default function ExitScenarioModeler({ cycles, currentValuation, customEx
     return { valuation: v, gains: g, combinedNetGain, combinedMultiple, carryRates, isCustom: customExitRows.includes(v) };
   });
 
-  const chartData = tableData.map(d => ({
-    valuation: d.valuation,
-    label: formatValuation(d.valuation),
-    "Cycle 1 Net Gain": d.gains[0]?.netGain || 0,
-    "Cycle 2 Net Gain": d.gains[1]?.netGain || 0,
-    "Combined Net Gain": d.combinedNetGain,
-  }));
+  const chartData = tableData.map(d => {
+    const entry: Record<string, number | string> = { valuation: d.valuation, label: formatValuation(d.valuation), "Combined Net Gain": d.combinedNetGain };
+    cycles.forEach((c, i) => { entry[`${c.label} Net Gain`] = d.gains[i]?.netGain || 0; });
+    return entry;
+  });
 
   const addRow = () => {
     const num = parseFloat(newVal.replace(/[^0-9.]/g, ''));
