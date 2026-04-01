@@ -146,19 +146,7 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
 
       {/* Section 2: Valuation Modeler */}
       <Card className="p-5 bg-card border-border">
-        <div className="flex items-center gap-4 mb-3">
-          <p className="text-2xl font-bold font-mono-nums text-primary">{formatValuation(valuation)}</p>
-          <div className="w-40">
-            <Input
-              value={inputFocused ? inputText : formatValuation(valuation)}
-              onChange={handleInput}
-              onFocus={handleInputFocus}
-              onBlur={handleInputBlur}
-              placeholder="e.g. 12 for $12B"
-              className="font-mono-nums bg-secondary border-border text-sm h-8"
-            />
-          </div>
-        </div>
+        <p className="text-3xl font-bold font-mono-nums text-primary text-center mb-4">{formatValuation(valuation)}</p>
         <Slider
           value={[valuation]}
           onValueChange={handleSlider}
@@ -167,8 +155,22 @@ export default function Dashboard({ cycles, currentValuation, onValuationChange 
           step={100_000_000}
           className="w-full"
         />
-        <div className="flex justify-between text-xs text-muted-foreground mt-1">
-          <span>$500M</span><span>$50B</span>
+        <div className="flex items-center justify-between mt-1">
+          <div className="flex gap-[1px] text-xs text-muted-foreground">
+            <span>$500M</span>
+            <span className="mx-auto" />
+          </div>
+          <div className="w-36">
+            <Input
+              value={inputFocused ? inputText : formatValuation(valuation)}
+              onChange={handleInput}
+              onFocus={handleInputFocus}
+              onBlur={handleInputBlur}
+              placeholder="e.g. 12 for $12B"
+              className="font-mono-nums bg-secondary border-border text-xs h-7"
+            />
+          </div>
+          <span className="text-xs text-muted-foreground">$50B</span>
         </div>
       </Card>
 
