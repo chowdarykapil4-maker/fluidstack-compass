@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { CycleData, calculateGains, formatCurrency, formatValuation, formatMultiple } from "@/lib/calculations";
+import { CycleData, calculateGains, getCarryRateLabel, formatCurrency, formatValuation, formatMultiple } from "@/lib/calculations";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from "recharts";
 import { Plus, Trash2 } from "lucide-react";
 
@@ -24,9 +24,10 @@ export default function ExitScenarioModeler({ cycles, currentValuation, customEx
     const g = cycles.map(c => calculateGains(c, v));
     const combinedNetGain = g.reduce((s, x) => s + x.netGain, 0);
     const totalOutlay = cycles.reduce((s, c) => s + c.totalOutlay, 0);
-    const totalNetInvested = cycles.reduce((s, c) => s + c.netInvested, 0);
-    const combinedMultiple = (totalNetInvested + combinedNetGain) / totalOutlay;
-    return { valuation: v, gains: g, combinedNetGain, combinedMultiple, isCustom: customExitRows.includes(v) };
+    const combinedNetPosition = g.reduce((s, x) => s + x.grossValue - x.totalCarry, 0);
+    const combinedMultiple = combinedNetPosition / totalOutlay;
+    const carryRates = cycles.map(c => getCarryRateLabel(c, v));
+    return { valuation: v, gains: g, combinedNetGain, combinedMultiple, carryRates, isCustom: customExitRows.includes(v) };
   });
 
   const chartData = tableData.map(d => ({
@@ -58,8 +59,8 @@ export default function ExitScenarioModeler({ cycles, currentValuation, customEx
           <thead>
             <tr className="border-b border-border">
               <th className="text-left py-2 px-2 text-muted-foreground font-medium" rowSpan={2}>Exit Valuation</th>
-              <th className="text-center py-1 px-2 text-primary font-medium border-b border-border" colSpan={3}>Cycle 1 — Series A</th>
-              <th className="text-center py-1 px-2 text-emerald-dim font-medium border-b border-border" colSpan={3}>Cycle 2 — Series B</th>
+              <th className="text-center py-1 px-2 text-primary font-medium border-b border-border" colSpan={4}>Cycle 1 — Class A</th>
+              <th className="text-center py-1 px-2 text-emerald-dim font-medium border-b border-border" colSpan={4}>Cycle 2 — Class B</th>
               <th className="text-center py-1 px-2 text-foreground font-medium border-b border-border" colSpan={2}>Combined</th>
               <th className="py-1 px-1" rowSpan={2}></th>
             </tr>
@@ -67,9 +68,11 @@ export default function ExitScenarioModeler({ cycles, currentValuation, customEx
               <th className="py-1 px-2">Gross Val</th>
               <th className="py-1 px-2">Net Gain</th>
               <th className="py-1 px-2">Multiple</th>
+              <th className="py-1 px-2">Carry Rate</th>
               <th className="py-1 px-2">Gross Val</th>
               <th className="py-1 px-2">Net Gain</th>
               <th className="py-1 px-2">Multiple</th>
+              <th className="py-1 px-2">Carry Rate</th>
               <th className="py-1 px-2">Net Gain</th>
               <th className="py-1 px-2">Multiple</th>
             </tr>
@@ -88,9 +91,11 @@ export default function ExitScenarioModeler({ cycles, currentValuation, customEx
                   <td className="py-2 px-2 font-mono-nums text-right">{formatCurrency(row.gains[0]?.grossValue || 0)}</td>
                   <td className={`py-2 px-2 font-mono-nums text-right ${(row.gains[0]?.netGain || 0) >= 0 ? 'text-gain-positive' : 'text-gain-negative'}`}>{formatCurrency(row.gains[0]?.netGain || 0)}</td>
                   <td className="py-2 px-2 font-mono-nums text-right">{formatMultiple(row.gains[0]?.netMultipleOnOutlay || 0)}</td>
+                  <td className="py-2 px-2 text-right text-xs text-muted-foreground">{row.carryRates[0]}</td>
                   <td className="py-2 px-2 font-mono-nums text-right">{formatCurrency(row.gains[1]?.grossValue || 0)}</td>
                   <td className={`py-2 px-2 font-mono-nums text-right ${(row.gains[1]?.netGain || 0) >= 0 ? 'text-gain-positive' : 'text-gain-negative'}`}>{formatCurrency(row.gains[1]?.netGain || 0)}</td>
                   <td className="py-2 px-2 font-mono-nums text-right">{formatMultiple(row.gains[1]?.netMultipleOnOutlay || 0)}</td>
+                  <td className="py-2 px-2 text-right text-xs text-muted-foreground">{row.carryRates[1]}</td>
                   <td className={`py-2 px-2 font-mono-nums text-right font-semibold ${row.combinedNetGain >= 0 ? 'text-gain-positive' : 'text-gain-negative'}`}>{formatCurrency(row.combinedNetGain)}</td>
                   <td className="py-2 px-2 font-mono-nums text-right font-semibold">{formatMultiple(row.combinedMultiple)}</td>
                   <td className="py-2 px-1">
