@@ -46,7 +46,7 @@ export default function SettingsModal({ open, onOpenChange, profile, onSave, isF
           <DialogTitle className="text-foreground">{isFirstTime ? "Welcome — Set Up Your Profile" : "Your Investment Profile"}</DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-5">
+        <div className="space-y-3">
           {/* Name */}
           <div>
             <label className="text-sm text-muted-foreground mb-1 block">Name</label>
