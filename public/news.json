@@ -1,6 +1,134 @@
 {
   "digests": [
     {
+      "week": "2026-05-01",
+      "label": "April 2026",
+      "generatedAt": "2026-05-01T19:55:36.666Z",
+      "quiet": false,
+      "summary": "17 items this month.",
+      "items": [
+        {
+          "headline": "FluidStack raising $1B at $18B valuation - Jane Street, Morgan Stanley",
+          "summary": "FluidStack in talks to raise $1 billion at $18 billion valuation led by Jane Street and Situational Awareness, with Morgan Stanley advising.",
+          "source": "Bloomberg",
+          "url": "https://www.bloomberg.com/news/articles/2026-04-14/jane-street-in-talks-to-back-fluidstack-at-18-billion-valuation",
+          "category": "funding"
+        },
+        {
+          "headline": "FluidStack valuation jumps 140% from $7.5B in December to $18B",
+          "summary": "FluidStack's valuation more than doubled from $7.5 billion in December 2025 to $18 billion in April 2026 funding talks.",
+          "source": "TechCrunch",
+          "url": "https://techcrunch.com/2026/04/14/ai-datacenter-startup-fluidstack-in-talks-for-1b-round-at-18b-valuation-months-after-hitting-7-5b-says-report",
+          "category": "funding"
+        },
+        {
+          "headline": "FluidStack relocates headquarters from UK to New York after Anthropic deal",
+          "summary": "FluidStack relocated headquarters from UK to New York following its landmark $50 billion Anthropic partnership.",
+          "source": "TechCrunch",
+          "url": "https://techcrunch.com/2026/04/14/ai-datacenter-startup-fluidstack-in-talks-for-1b-round-at-18b-valuation-months-after-hitting-7-5b-says-report",
+          "category": "other"
+        },
+        {
+          "headline": "FluidStack pulled out of €10B France AI project to focus on US",
+          "summary": "FluidStack withdrew from a key €10 billion AI project in France to focus on U.S. opportunities.",
+          "source": "Yahoo Finance",
+          "url": "https://finance.yahoo.com/sectors/technology/articles/ai-datacenter-startup-fluidstack-talks-213338422.html",
+          "category": "other"
+        },
+        {
+          "headline": "FluidStack partners with Nvidia, Dell, Borealis for exascale clusters",
+          "summary": "FluidStack partnered with Nvidia, Dell, and Borealis for exascale GPU clusters using renewable energy in Iceland and Nordics.",
+          "source": "DataCenter Dynamics",
+          "url": "https://www.datacenterdynamics.com/en/news/fluidstack-partners-with-nvidia-borealis-and-dell-for-exascale-gpu-clusters/",
+          "category": "partnership"
+        },
+        {
+          "headline": "Google considering $100M investment in FluidStack TPU expansion",
+          "summary": "Google in talks to invest approximately $100 million in FluidStack tied to expanding TPU accelerator distribution.",
+          "source": "Sacra",
+          "url": "https://sacra.com/c/fluidstack/",
+          "category": "funding"
+        },
+        {
+          "headline": "FluidStack raised $450M equity financing in January 2026",
+          "summary": "FluidStack completed $450 million in equity financing in January 2026 according to Sacra research.",
+          "source": "Sacra PDF",
+          "url": "https://sacra-pdfs.s3.us-east-2.amazonaws.com/fluidstack.pdf",
+          "category": "funding"
+        },
+        {
+          "headline": "FluidStack secured $10B GPU-collateralized debt from Macquarie",
+          "summary": "FluidStack obtained up to $10 billion in debt financing capacity secured by GPU assets through Macquarie Group.",
+          "source": "Sacra",
+          "url": "https://sacra.com/c/fluidstack/",
+          "category": "funding"
+        },
+        {
+          "headline": "FluidStack TeraWulf joint venture completes $500M+ project financing",
+          "summary": "TeraWulf and FluidStack announced successful pricing of project financing for 168 MW HPC compute joint venture.",
+          "source": "TeraWulf",
+          "url": "https://investors.terawulf.com/news-events/press-releases/detail/128/terawulf-and-fluidstack-announce-successful-pricing-of",
+          "category": "funding"
+        },
+        {
+          "headline": "FluidStack revenue grew from $1.8M (2022) to $66.2M (2024)",
+          "summary": "FluidStack's revenue accelerated from $1.8 million in 2022 to $66.2 million in 2024 amid AI infrastructure boom.",
+          "source": "Tech Insider",
+          "url": "https://tech-insider.org/fluidstack-18-billion-valuation-anthropic-neocloud-2026/",
+          "category": "other"
+        },
+        {
+          "headline": "FluidStack employee count reaches 164 as of March 2026",
+          "summary": "FluidStack's employee count reached 164 as of March 31, 2026, up from previous headcount levels.",
+          "source": "Tracxn",
+          "url": "https://tracxn.com/d/companies/fluidstack/__Ji1SZpdm1qvFKvAP2LkNxy7J9gqN2uoHCG0DHWBS600",
+          "category": "hiring"
+        },
+        {
+          "headline": "FluidStack manages over 100,000 GPUs across its platform",
+          "summary": "FluidStack manages more than 100,000 GPUs across its network serving AI companies like Meta, Mistral, and Character.AI.",
+          "source": "Sacra",
+          "url": "https://sacra.com/c/fluidstack/",
+          "category": "product"
+        },
+        {
+          "headline": "FluidStack customers include Meta, Poolside, Black Forest Labs",
+          "summary": "FluidStack counts Anthropic, Meta, Poolside, Black Forest Labs, and Mistral among its key customers.",
+          "source": "TechCrunch",
+          "url": "https://techcrunch.com/2026/04/14/ai-datacenter-startup-fluidstack-in-talks-for-1b-round-at-18b-valuation-months-after-hitting-7-5b-says-report",
+          "category": "other"
+        },
+        {
+          "headline": "TeraWulf signs additional 160MW FluidStack expansion at Lake Mariner",
+          "summary": "TeraWulf announced FluidStack exercised option to expand with additional 160 MW capacity at Lake Mariner campus.",
+          "source": "TeraWulf SEC",
+          "url": "https://www.sec.gov/Archives/edgar/data/1083301/000110465925079463/tm2523651d3_ex99-1.htm",
+          "category": "partnership"
+        },
+        {
+          "headline": "Google backstops $3.2B FluidStack obligations, gets 14% TeraWulf equity",
+          "summary": "Google provides $3.2 billion backstop of FluidStack lease obligations and receives approximately 14% pro forma TeraWulf equity.",
+          "source": "Sacra",
+          "url": "https://sacra.com/c/fluidstack/",
+          "category": "partnership"
+        },
+        {
+          "headline": "FluidStack offers latest GPUs including H100, H200, B200, GB200",
+          "summary": "FluidStack's infrastructure supports latest GPU hardware including H100, H200, B200, and GB200 chips at 95%+ theoretical performance.",
+          "source": "Sacra",
+          "url": "https://sacra.com/c/fluidstack/",
+          "category": "product"
+        },
+        {
+          "headline": "Google plans up to $40B investment in Anthropic amid FluidStack deals",
+          "summary": "Google plans to invest up to $40 billion in Anthropic, with projects financially supported by Google including FluidStack data centers.",
+          "source": "DataCenter Dynamics",
+          "url": "https://www.datacenterdynamics.com/en/news/google-plans-to-invest-up-to-40bn-in-anthropic/",
+          "category": "market"
+        }
+      ]
+    },
+    {
       "week": "2026-04-01",
       "label": "March 2026",
       "generatedAt": "2026-04-01T22:37:39.028Z",
